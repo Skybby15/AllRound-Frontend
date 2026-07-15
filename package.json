@@ -7,7 +7,13 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "generate-api": "openapi-generator-cli generate -i http://localhost:8080/q/openapi -g typescript-fetch -o api"
+    "generate-api": "openapi-generator-cli generate -i http://localhost:8080/q/openapi -g typescript-fetch -o api",
+    "check-types": "tsc --noEmit",
+
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage",
+    "test:watch": "vitest --watch"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",
@@ -24,12 +30,20 @@
   "devDependencies": {
     "@openapitools/openapi-generator-cli": "^2.39.1",
     "@tailwindcss/postcss": "^4",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitest/coverage-v8": "^4.1.10",
+    "@vitest/ui": "^4.1.10",
     "eslint": "^9",
     "eslint-config-next": "16.2.10",
+    "jsdom": "^29.1.1",
+    "msw": "^2.15.0",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.10"
   }
 }
