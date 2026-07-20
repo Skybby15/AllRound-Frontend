@@ -2,7 +2,6 @@ import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import getStarfield from "@/three/getStarfield";
 import { drawThreeGeo } from "@/three/threeGeoJSON";
-import { WebGPURenderer } from "three/webgpu";
 
 interface GlobeSceneProps {
     animating: boolean;
@@ -33,19 +32,17 @@ export default function GlobeScene({ animating }: GlobeSceneProps) {
             const camera = new THREE.PerspectiveCamera(75, width / height, 1, 100);
             camera.position.z = 3;
 
-            const renderer = new WebGPURenderer({
+            const renderer = new THREE.WebGLRenderer({
                 antialias: true,
                 alpha: true,
             });
-
-            await renderer.init();
 
             if (disposed) {
                 renderer.dispose();
                 return;
             }
 
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+            renderer.setPixelRatio(1);
             renderer.setSize(width, height);
 
             container.appendChild(renderer.domElement);
@@ -68,7 +65,7 @@ export default function GlobeScene({ animating }: GlobeSceneProps) {
             const globeMaterial = new THREE.MeshBasicMaterial({
                 color: 0x000000,
                 transparent: true,
-                opacity: 0.99,
+                opacity: 0.8,
             });
 
             const globe = new THREE.Mesh(geometry, globeMaterial);
@@ -78,7 +75,6 @@ export default function GlobeScene({ animating }: GlobeSceneProps) {
             // Stars
             const stars = getStarfield({
                 numStars: 700,
-                fog: false,
             });
 
             scene.add(stars);
@@ -101,6 +97,9 @@ export default function GlobeScene({ animating }: GlobeSceneProps) {
                 });
 
             globeGroup.rotation.z = THREE.MathUtils.degToRad(-23.4);
+
+            globeGroup.rotation.x += THREE.MathUtils.randFloat(-1, 1);
+            globeGroup.rotation.y += THREE.MathUtils.randFloat(-1, 1);
             const animation = () => {
                 clock.update();
 
@@ -112,8 +111,9 @@ export default function GlobeScene({ animating }: GlobeSceneProps) {
 
                     stars.rotation.y += delta * 0.012;
                     stars.rotation.x += delta * 0.006;
+
+                    renderer.render(scene, camera);
                 }
-                renderer.render(scene, camera);
             };
 
             renderer.setAnimationLoop(animation);

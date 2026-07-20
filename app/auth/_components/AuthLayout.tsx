@@ -39,7 +39,8 @@ export default function AuthLayout() {
                     <div
                         className={cn(
                             "flex flex-col h-full w-full transition-transform duration-500 ease-out",
-                            isSignup ? "-translate-y-full" : "translate-y-0"
+                            isSignup ? "-translate-y-full" : "translate-y-0",
+                            "will-change-transforms"
                         )}
                     >
                         <div

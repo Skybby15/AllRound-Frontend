@@ -1,29 +1,55 @@
 import * as THREE from "three";
-import { positionLocal, color, vec3, range } from "three/tsl";
-import { MeshBasicNodeMaterial } from "three/webgpu";
 
-export default function getStarfield({ numStars = 500, fog = false } = {}) {
-    const starGeo = new THREE.IcosahedronGeometry(0.05, 0);
+export default function getStarfield({ numStars = 500 } = {}) {
+    const geometry = new THREE.IcosahedronGeometry(0.05, 0);
 
-    const brightnessRange = range(0.01, 1.0);
-    const starColor = "#db5902";
-
-    const mat = new MeshBasicNodeMaterial({
-        colorNode: color(starColor).mul(brightnessRange),
-        fog,
+    const material = new THREE.MeshBasicMaterial({
+        color: 0xffffff,
+        fog: false,
     });
 
-    const phi = range(0, Math.PI * 2);
-    const cosTheta = range(-1, 1);
-    const radius = range(49, 50);
-    const theta = cosTheta.acos();
-    const sphericalX = radius.mul(theta.sin()).mul(phi.cos());
-    const sphericalY = radius.mul(theta.sin()).mul(phi.sin());
-    const sphericalZ = radius.mul(cosTheta);
-    const positionRange = vec3(sphericalX, sphericalY, sphericalZ);
-    mat.positionNode = positionLocal.add(positionRange);
+    const white = new THREE.Color("#ffffff");
+    const orange = new THREE.Color("#db5902");
+    const blue = new THREE.Color("#0355fc");
 
-    const mesh = new THREE.InstancedMesh(starGeo, mat, numStars);
+    const mesh = new THREE.InstancedMesh(geometry, material, numStars);
+
+    const dummy = new THREE.Object3D();
+
+    for (let i = 0; i < numStars; i++) {
+        const phi = Math.random() * Math.PI * 2;
+        const cosTheta = Math.random() * 2 - 1;
+        const theta = Math.acos(cosTheta);
+        const radius = 49 + Math.random();
+
+        dummy.position.set(
+            radius * Math.sin(theta) * Math.cos(phi),
+            radius * Math.sin(theta) * Math.sin(phi),
+            radius * cosTheta
+        );
+
+        const scale = THREE.MathUtils.randFloat(0.5, 2);
+
+        dummy.scale.setScalar(scale);
+        dummy.updateMatrix();
+        mesh.setMatrixAt(i, dummy.matrix);
+
+        const r = Math.random();
+
+        if (r < 0.33) {
+            mesh.setColorAt(i, white);
+        } else if (r < 0.7) {
+            mesh.setColorAt(i, orange);
+        } else {
+            mesh.setColorAt(i, blue);
+        }
+    }
+
+    mesh.instanceMatrix.needsUpdate = true;
+
+    if (mesh.instanceColor) {
+        mesh.instanceColor.needsUpdate = true;
+    }
 
     return mesh;
 }

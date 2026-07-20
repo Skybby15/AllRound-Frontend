@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { LineGeometry } from "three/addons/lines/LineGeometry.js";
-import { Line2 } from "three/addons/lines/webgpu/Line2.js";
-import { Line2NodeMaterial, MeshBasicNodeMaterial } from "three/webgpu";
+import { Line2 } from "three/addons/lines/Line2.js";
+import { LineMaterial } from "three/addons/lines/LineMaterial.js";
 
 /* Draw GeoJSON
 
@@ -225,7 +225,7 @@ export function drawThreeGeo({ json, radius, materialOptions }) {
 
         const particle_material = new THREE.PointsMaterial(options);
 
-        const particle = new THREE.Points(particle_geom, particle_material);
+        const particle = new THREE.Points(geo, particle_material);
         container.add(particle);
 
         clearArrays();
@@ -242,13 +242,11 @@ export function drawThreeGeo({ json, radius, materialOptions }) {
         //color setting
         const color = new THREE.Color("#db5902");
 
-        const lineMaterial = new Line2NodeMaterial({
+        const lineMaterial = new LineMaterial({
             color,
             linewidth: 2, // in world units with size attenuation, pixels otherwise
             fog: true,
-            vertexColors: true,
             dashed: false,
-            alphaToCoverage: true,
         });
 
         const line = new Line2(lineGeo, lineMaterial);
