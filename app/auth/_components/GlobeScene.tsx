@@ -1,0 +1,175 @@
+import { useEffect, useRef } from "react";
+import * as THREE from "three";
+import getStarfield from "@/three/getStarfield";
+import { drawThreeGeo } from "@/three/threeGeoJSON";
+import { WebGPURenderer } from "three/webgpu";
+
+interface GlobeSceneProps {
+    animating: boolean;
+}
+
+export default function GlobeScene({ animating }: GlobeSceneProps) {
+    const animateRef = useRef(animating);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const clock = new THREE.Timer();
+
+    useEffect(() => {
+        animateRef.current = animating;
+    }, [animating]);
+
+    useEffect(() => {
+        let disposed = false;
+
+        const init = async () => {
+            const container = containerRef.current;
+            if (!container) return;
+
+            const scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x000000);
+
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+
+            const camera = new THREE.PerspectiveCamera(75, width / height, 1, 100);
+            camera.position.z = 3;
+
+            const renderer = new WebGPURenderer({
+                antialias: true,
+                alpha: true,
+            });
+
+            await renderer.init();
+
+            if (disposed) {
+                renderer.dispose();
+                return;
+            }
+
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+            renderer.setSize(width, height);
+
+            container.appendChild(renderer.domElement);
+
+            const globeGroup = new THREE.Group();
+            scene.add(globeGroup);
+
+            // Globe wireframe
+            const geometry = new THREE.SphereGeometry(2);
+
+            const lineMaterial = new THREE.LineBasicMaterial({
+                color: 0x222222,
+            });
+
+            const edges = new THREE.EdgesGeometry(geometry, 1);
+            const wireframe = new THREE.LineSegments(edges, lineMaterial);
+            globeGroup.add(wireframe);
+
+            // Dark globe
+            const globeMaterial = new THREE.MeshBasicMaterial({
+                color: 0x000000,
+                transparent: true,
+                opacity: 0.99,
+            });
+
+            const globe = new THREE.Mesh(geometry, globeMaterial);
+            globe.scale.setScalar(0.99);
+            globeGroup.add(globe);
+
+            // Stars
+            const stars = getStarfield({
+                numStars: 700,
+                fog: false,
+            });
+
+            scene.add(stars);
+
+            //Countries
+            fetch("/assets/geojson/ne_110m_land.json")
+                .then((res) => res.json())
+                .then((json) => {
+                    if (disposed) return;
+
+                    const countries = drawThreeGeo({
+                        json,
+                        radius: 2,
+                        materialOptions: {
+                            color: 0xffffff,
+                        },
+                    });
+
+                    globeGroup.add(countries);
+                });
+
+            globeGroup.rotation.z = THREE.MathUtils.degToRad(-23.4);
+            const animation = () => {
+                clock.update();
+
+                if (animateRef.current) {
+                    const delta = clock.getDelta();
+
+                    globeGroup.rotation.x += delta * 0.06;
+                    globeGroup.rotation.y += delta * 0.03;
+
+                    stars.rotation.y += delta * 0.012;
+                    stars.rotation.x += delta * 0.006;
+                }
+                renderer.render(scene, camera);
+            };
+
+            renderer.setAnimationLoop(animation);
+
+            const handleResize = () => {
+                if (!containerRef.current) return;
+
+                const width = containerRef.current.clientWidth;
+                const height = containerRef.current.clientHeight;
+
+                camera.aspect = width / height;
+                camera.updateProjectionMatrix();
+
+                renderer.setSize(width, height);
+            };
+
+            window.addEventListener("resize", handleResize);
+            const handleVisibilityChange = () => {
+                if (document.hidden) {
+                    renderer.setAnimationLoop(null);
+                } else {
+                    renderer.setAnimationLoop(animation);
+                }
+            };
+
+            document.addEventListener("visibilitychange", handleVisibilityChange);
+
+            return () => {
+                renderer.setAnimationLoop(null);
+
+                window.removeEventListener("resize", handleResize);
+                document.removeEventListener("visibilitychange", handleVisibilityChange);
+
+                geometry.dispose();
+                edges.dispose();
+                lineMaterial.dispose();
+                globeMaterial.dispose();
+
+                scene.clear();
+
+                renderer.dispose();
+
+                containerRef.current?.removeChild(renderer.domElement);
+            };
+        };
+
+        const cleanup: Promise<(() => void) | undefined> = init().catch((err) => {
+            console.error(err);
+            return undefined;
+        });
+
+        return () => {
+            disposed = true;
+            cleanup.then((fn) => fn?.());
+        };
+    }, []);
+
+    return <div ref={containerRef} className="absolute inset-0 z-0 overflow-hidden" />;
+}
