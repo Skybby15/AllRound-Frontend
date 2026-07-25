@@ -19,12 +19,18 @@ import RHFInputField from "@/components/custom-ui/RHFInputField";
 import RHFPasswordField from "@/components/custom-ui/RHFPasswordField";
 import { signupSchema } from "../_schemas/SignupSchema";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import useSignup from "../_hooks/useSignup";
+import { SignupRequest } from "@/api";
+import { Loader2 } from "lucide-react";
+import { ApiError } from "@/reactquery/ApiError";
 
 interface SignupFormProps {
     switchupFn: () => void;
 }
 
 export default function SignupForm({ switchupFn }: SignupFormProps) {
+    const { mutate: signup, status: signupStatus } = useSignup();
+
     const formName = "signupForm";
     const form = useForm<z.infer<typeof signupSchema>>({
         resolver: zodResolver(signupSchema),
@@ -38,19 +44,34 @@ export default function SignupForm({ switchupFn }: SignupFormProps) {
     });
 
     function onSubmit(data: z.infer<typeof signupSchema>) {
-        toast("You submitted the following values:", {
-            description: (
-                <pre className="mt-2 w-[320px] overflow-x-auto rounded-md bg-code p-4 text-code-foreground">
-                    <code>{JSON.stringify(data, null, 2)}</code>
-                </pre>
-            ),
-            position: "bottom-right",
-            classNames: {
-                content: "flex flex-col gap-2",
+        const request: SignupRequest = {
+            email: data.email,
+            username: data.username,
+            password: data.password,
+        };
+
+        signup(request, {
+            onSuccess: () => {
+                toast.success("You signed up succesfully!", {
+                    position: "top-center",
+                });
+                switchupFn();
+                form.reset();
             },
-            style: {
-                "--border-radius": "calc(var(--radius)  + 4px)",
-            } as React.CSSProperties,
+            onError: (err) => {
+                if (err instanceof ApiError) {
+                    if (err.code == "USERNAME_ALREADY_EXISTS")
+                        form.setError("username", {
+                            type: "server",
+                        });
+                    else if (err.code == "EMAIL_ALREADY_EXISTS")
+                        form.setError("email", {
+                            type: "server",
+                        });
+                }
+
+                toast.error(err.message);
+            },
         });
     }
 
@@ -118,8 +139,14 @@ export default function SignupForm({ switchupFn }: SignupFormProps) {
                 </form>
             </CardContent>
             <CardFooter className="flex-col gap-2">
-                <Button type="submit" className="w-full" form="signup-form">
+                <Button
+                    type="submit"
+                    className="w-full"
+                    form="signup-form"
+                    disabled={signupStatus == "pending"}
+                >
                     Sign Up
+                    {signupStatus == "pending" && <Loader2 className="h-5 w-5 animate-spin" />}
                 </Button>
                 <Tooltip>
                     <TooltipTrigger

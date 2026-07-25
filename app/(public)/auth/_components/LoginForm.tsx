@@ -19,14 +19,26 @@ import { FieldGroup } from "@/components/ui/field";
 import RHFInputField from "@/components/custom-ui/RHFInputField";
 import RHFPasswordField from "@/components/custom-ui/RHFPasswordField";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import useLogin from "../_hooks/useLogin";
+import { LoginRequest } from "@/api";
+import { Loader2 } from "lucide-react";
+import { ApiError } from "@/reactquery/ApiError";
+import { Router } from "next/router";
+import { useRouter } from "next/navigation";
 
 interface LoginFormProps {
     switchupFn: () => void;
 }
 
+type LoginFormData = z.infer<typeof loginSchema>;
+const formFields: (keyof LoginFormData)[] = ["email", "password"];
+
 export default function LoginForm({ switchupFn }: LoginFormProps) {
+    const { mutate: loginMutate, status: loginStatus } = useLogin();
+    const router = useRouter();
+
     const formName = "loginForm";
-    const form = useForm<z.infer<typeof loginSchema>>({
+    const form = useForm<LoginFormData>({
         resolver: zodResolver(loginSchema),
         defaultValues: {
             email: "",
@@ -35,19 +47,34 @@ export default function LoginForm({ switchupFn }: LoginFormProps) {
     });
 
     function onSubmit(data: z.infer<typeof loginSchema>) {
-        toast("Trying to login with the following values:", {
-            description: (
-                <pre className="mt-2 w-[320px] overflow-x-auto rounded-md bg-code p-4 text-code-foreground">
-                    <code>{JSON.stringify(data, null, 2)}</code>
-                </pre>
-            ),
-            position: "bottom-right",
-            classNames: {
-                content: "flex flex-col gap-2",
+        const request: LoginRequest = {
+            email: data.email,
+            password: data.password,
+        };
+
+        loginMutate(request, {
+            onSuccess: () => {
+                toast.success("Login was succesful", {
+                    position: "top-center",
+                });
+
+                router.push("/home");
             },
-            style: {
-                "--border-radius": "calc(var(--radius)  + 4px)",
-            } as React.CSSProperties,
+            onError: (err) => {
+                if (err instanceof ApiError) {
+                    form.resetField("password");
+
+                    formFields.forEach((field) => {
+                        form.setError(field, {
+                            type: "server",
+                        });
+                    });
+                }
+
+                toast.error(err.message, {
+                    position: "top-center",
+                });
+            },
         });
     }
 
@@ -84,8 +111,14 @@ export default function LoginForm({ switchupFn }: LoginFormProps) {
                 </form>
             </CardContent>
             <CardFooter className="flex-col gap-2">
-                <Button type="submit" className="w-full" form="login-form">
+                <Button
+                    type="submit"
+                    className="w-full"
+                    form="login-form"
+                    disabled={loginStatus == "pending"}
+                >
                     Login
+                    {loginStatus == "pending" && <Loader2 className="h-5 w-5 animate-spin" />}
                 </Button>
                 <Tooltip>
                     <TooltipTrigger

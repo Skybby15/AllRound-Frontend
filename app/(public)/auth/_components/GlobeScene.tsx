@@ -74,7 +74,7 @@ export default function GlobeScene({ animating }: GlobeSceneProps) {
 
             // Stars
             const stars = getStarfield({
-                numStars: 700,
+                numStars: 1000,
             });
 
             scene.add(stars);
@@ -111,26 +111,36 @@ export default function GlobeScene({ animating }: GlobeSceneProps) {
 
                     stars.rotation.y += delta * 0.012;
                     stars.rotation.x += delta * 0.006;
-
                     renderer.render(scene, camera);
                 }
             };
 
             renderer.setAnimationLoop(animation);
 
+            let resizeRequested = false;
+
             const handleResize = () => {
-                if (!containerRef.current) return;
+                if (resizeRequested) return;
 
-                const width = containerRef.current.clientWidth;
-                const height = containerRef.current.clientHeight;
+                resizeRequested = true;
 
-                camera.aspect = width / height;
-                camera.updateProjectionMatrix();
+                requestAnimationFrame(() => {
+                    resizeRequested = false;
 
-                renderer.setSize(width, height);
+                    if (!containerRef.current) return;
+
+                    const width = containerRef.current.clientWidth;
+                    const height = containerRef.current.clientHeight;
+
+                    camera.aspect = width / height;
+                    camera.updateProjectionMatrix();
+
+                    renderer.setSize(width, height);
+                    renderer.render(scene, camera);
+                });
             };
-
             window.addEventListener("resize", handleResize);
+
             const handleVisibilityChange = () => {
                 if (document.hidden) {
                     renderer.setAnimationLoop(null);
@@ -138,7 +148,6 @@ export default function GlobeScene({ animating }: GlobeSceneProps) {
                     renderer.setAnimationLoop(animation);
                 }
             };
-
             document.addEventListener("visibilitychange", handleVisibilityChange);
 
             return () => {
