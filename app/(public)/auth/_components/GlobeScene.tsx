@@ -10,7 +10,7 @@ interface GlobeSceneProps {
 export default function GlobeScene({ animating }: GlobeSceneProps) {
     const animateRef = useRef(animating);
     const containerRef = useRef<HTMLDivElement>(null);
-    const clock = new THREE.Timer();
+    const clock = useRef<THREE.Timer>(new THREE.Timer());
 
     useEffect(() => {
         animateRef.current = animating;
@@ -88,9 +88,6 @@ export default function GlobeScene({ animating }: GlobeSceneProps) {
                     const countries = drawThreeGeo({
                         json,
                         radius: 2,
-                        materialOptions: {
-                            color: 0xffffff,
-                        },
                     });
 
                     globeGroup.add(countries);
@@ -101,10 +98,10 @@ export default function GlobeScene({ animating }: GlobeSceneProps) {
             globeGroup.rotation.x += THREE.MathUtils.randFloat(-1, 1);
             globeGroup.rotation.y += THREE.MathUtils.randFloat(-1, 1);
             const animation = () => {
-                clock.update();
+                clock.current.update();
 
                 if (animateRef.current) {
-                    const delta = clock.getDelta();
+                    const delta = clock.current.getDelta();
 
                     globeGroup.rotation.x += delta * 0.06;
                     globeGroup.rotation.y += delta * 0.03;
@@ -178,7 +175,7 @@ export default function GlobeScene({ animating }: GlobeSceneProps) {
             disposed = true;
             cleanup.then((fn) => fn?.());
         };
-    }, []);
+    }, [clock]);
 
     return <div ref={containerRef} className="absolute inset-0 z-0 overflow-hidden" />;
 }

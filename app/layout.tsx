@@ -4,8 +4,6 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Toaster } from "sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClientProvider } from "@tanstack/react-query";
-import { queryClient } from "@/reactquery/reactQueryClient";
 import QueryProvider from "@/reactquery/queryClientProvider";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 

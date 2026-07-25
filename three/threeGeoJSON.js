@@ -10,7 +10,7 @@ and draws the geoJSON geometries.
 
 */
 
-export function drawThreeGeo({ json, radius, materialOptions }) {
+export function drawThreeGeo({ json, radius }) {
     const container = new THREE.Object3D();
     container.userData.update = (t) => {
         for (let i = 0; i < container.children.length; i++) {
@@ -30,7 +30,7 @@ export function drawThreeGeo({ json, radius, materialOptions }) {
     for (let geom_num = 0; geom_num < json_geom.length; geom_num++) {
         if (json_geom[geom_num].type == "Point") {
             convertToSphereCoords(json_geom[geom_num].coordinates, radius);
-            drawParticle(x_values[0], y_values[0], z_values[0], materialOptions);
+            drawParticle(x_values[0], y_values[0], z_values[0]);
         } else if (json_geom[geom_num].type == "MultiPoint") {
             for (
                 let point_num = 0;
@@ -38,7 +38,7 @@ export function drawThreeGeo({ json, radius, materialOptions }) {
                 point_num++
             ) {
                 convertToSphereCoords(json_geom[geom_num].coordinates[point_num], radius);
-                drawParticle(x_values[0], y_values[0], z_values[0], materialOptions);
+                drawParticle(x_values[0], y_values[0], z_values[0]);
             }
         } else if (json_geom[geom_num].type == "LineString") {
             coordinate_array = createCoordinateArray(json_geom[geom_num].coordinates);
@@ -46,7 +46,7 @@ export function drawThreeGeo({ json, radius, materialOptions }) {
             for (let point_num = 0; point_num < coordinate_array.length; point_num++) {
                 convertToSphereCoords(coordinate_array[point_num], radius);
             }
-            drawLine(x_values, y_values, z_values, materialOptions);
+            drawLine(x_values, y_values, z_values);
         } else if (json_geom[geom_num].type == "Polygon") {
             for (
                 let segment_num = 0;
@@ -60,7 +60,7 @@ export function drawThreeGeo({ json, radius, materialOptions }) {
                 for (let point_num = 0; point_num < coordinate_array.length; point_num++) {
                     convertToSphereCoords(coordinate_array[point_num], radius);
                 }
-                drawLine(x_values, y_values, z_values, materialOptions);
+                drawLine(x_values, y_values, z_values);
             }
         } else if (json_geom[geom_num].type == "MultiLineString") {
             for (
@@ -75,7 +75,7 @@ export function drawThreeGeo({ json, radius, materialOptions }) {
                 for (let point_num = 0; point_num < coordinate_array.length; point_num++) {
                     convertToSphereCoords(coordinate_array[point_num], radius);
                 }
-                drawLine(x_values, y_values, z_values, materialOptions);
+                drawLine(x_values, y_values, z_values);
             }
         } else if (json_geom[geom_num].type == "MultiPolygon") {
             for (
@@ -95,7 +95,7 @@ export function drawThreeGeo({ json, radius, materialOptions }) {
                     for (let point_num = 0; point_num < coordinate_array.length; point_num++) {
                         convertToSphereCoords(coordinate_array[point_num], radius);
                     }
-                    drawLine(x_values, y_values, z_values, materialOptions);
+                    drawLine(x_values, y_values, z_values);
                 }
             }
         } else {
@@ -219,11 +219,11 @@ export function drawThreeGeo({ json, radius, materialOptions }) {
         z_values.push(Math.sin((lat * Math.PI) / 180) * sphere_radius);
     }
 
-    function drawParticle(x, y, z, options) {
+    function drawParticle(x, y, z) {
         let geo = new THREE.BufferGeometry();
         geo.setAttribute("position", new THREE.Float32BufferAttribute([x, y, z], 3));
 
-        const particle_material = new THREE.PointsMaterial(options);
+        const particle_material = new THREE.PointsMaterial();
 
         const particle = new THREE.Points(geo, particle_material);
         container.add(particle);
@@ -231,7 +231,7 @@ export function drawThreeGeo({ json, radius, materialOptions }) {
         clearArrays();
     }
 
-    function drawLine(x_values, y_values, z_values, options) {
+    function drawLine(x_values, y_values, z_values) {
         const lineGeo = new LineGeometry();
         const verts = [];
         for (let i = 0; i < x_values.length; i++) {

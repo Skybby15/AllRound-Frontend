@@ -2,6 +2,7 @@ import { LoginRequest, ResponseError } from "@/api";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { authApi } from "@/reactquery/apiClients";
 import { ApiError } from "@/reactquery/ApiError";
+import { ErrorResponse } from "@/reactquery/ErrorResponse";
 import { useMutation } from "@tanstack/react-query";
 
 export default function useLogin() {

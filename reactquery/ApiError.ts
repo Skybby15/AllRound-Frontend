@@ -1,3 +1,5 @@
+import { ErrorResponse } from "./ErrorResponse";
+
 export class ApiError extends Error implements ErrorResponse {
     constructor(
         public code: string,

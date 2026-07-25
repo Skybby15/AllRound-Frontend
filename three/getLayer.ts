@@ -3,12 +3,12 @@ import * as THREE from "three";
 const loader = new THREE.TextureLoader();
 
 interface getSpriteProps {
-    hasFog: any;
-    color: any;
-    opacity: any;
-    path: any;
-    pos: any;
-    size: any;
+    hasFog: boolean;
+    color: THREE.Color;
+    opacity: number;
+    path: string;
+    pos: THREE.Vector3;
+    size: number;
 }
 
 function getSprite({ hasFog, color, opacity, path, pos, size }: getSpriteProps) {
@@ -41,16 +41,14 @@ function getLayer({
 }) {
     const layerGroup = new THREE.Group();
     for (let i = 0; i < numSprites; i += 1) {
-        let angle = (i / numSprites) * Math.PI * 2;
+        const angle = (i / numSprites) * Math.PI * 2;
         const pos = new THREE.Vector3(
             Math.cos(angle) * Math.random() * radius,
             Math.sin(angle) * Math.random() * radius,
             z + Math.random()
         );
-        const length = new THREE.Vector3(pos.x, pos.y, 0).length();
-        // const hue = 0.0; // (0.9 - (radius - length) / radius) * 1;
 
-        let color = new THREE.Color().setHSL(hue, 1, sat);
+        const color = new THREE.Color().setHSL(hue, 1, sat);
         const sprite = getSprite({ hasFog, color, opacity, path, pos, size });
         layerGroup.add(sprite);
     }
