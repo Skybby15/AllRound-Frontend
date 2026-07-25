@@ -22,12 +22,6 @@ jobs:
                   repository: Skybby15/AllRound-Backend
                   path: backend
 
-            - name: List backend files
-              run: |
-                  pwd
-                  ls -R
-                  ls -R backend
-
             - name: Setup Node.js
               uses: actions/setup-node@v4
               with:
@@ -40,7 +34,7 @@ jobs:
             - name: Generate API
               run: |
                   npx openapi-generator-cli generate \
-                    -i backend/openapi/openapi-docs.yaml \
+                    -i backend/openapi/openapi.yaml \
                     -g typescript-fetch \
                     -o api
 
@@ -94,7 +88,7 @@ jobs:
             - name: Generate API
               run: |
                   npx openapi-generator-cli generate \
-                    -i backend/openapi/openapi-docs.yaml \
+                    -i backend/openapi/openapi.yaml \
                     -g typescript-fetch \
                     -o api
 
