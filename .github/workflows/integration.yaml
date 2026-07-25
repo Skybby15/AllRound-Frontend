@@ -22,6 +22,12 @@ jobs:
                   repository: Skybby15/AllRound-Backend
                   path: backend
 
+            - name: List backend files
+              run: |
+                  pwd
+                  ls -R
+                  ls -R backend
+
             - name: Setup Node.js
               uses: actions/setup-node@v4
               with:
