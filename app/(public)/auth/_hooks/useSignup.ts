@@ -1,6 +1,7 @@
 import { ResponseError, SignupRequest } from "@/api";
 import { authApi } from "@/reactquery/apiClients";
 import { ApiError } from "@/reactquery/ApiError";
+import { ErrorResponse } from "@/reactquery/ErrorResponse";
 import { useMutation } from "@tanstack/react-query";
 
 export default function useSignup() {
