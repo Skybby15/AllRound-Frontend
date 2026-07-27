@@ -31,7 +31,9 @@ describe("AuthProvider", () => {
     });
 
     it("initializes auth state from the refresh response", async () => {
-        vi.mocked(authApi.authRefreshPost).mockResolvedValue({ accessToken: "from-refresh" } as never);
+        vi.mocked(authApi.authRefreshPost).mockResolvedValue({
+            accessToken: "from-refresh",
+        } as never);
 
         render(
             <AuthProvider>
