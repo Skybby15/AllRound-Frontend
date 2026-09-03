@@ -5,9 +5,10 @@ import { drawThreeGeo } from "@/three/threeGeoJSON";
 
 interface GlobeSceneProps {
     animating: boolean;
+    withGlobe?: boolean;
 }
 
-export default function GlobeScene({ animating }: GlobeSceneProps) {
+export default function GlobeScene({ animating, withGlobe = true }: GlobeSceneProps) {
     const animateRef = useRef(animating);
     const containerRef = useRef<HTMLDivElement>(null);
     const clock = useRef<THREE.Timer>(new THREE.Timer());
@@ -47,31 +48,6 @@ export default function GlobeScene({ animating }: GlobeSceneProps) {
 
             container.appendChild(renderer.domElement);
 
-            const globeGroup = new THREE.Group();
-            scene.add(globeGroup);
-
-            // Globe wireframe
-            const geometry = new THREE.SphereGeometry(2);
-
-            const lineMaterial = new THREE.LineBasicMaterial({
-                color: 0x222222,
-            });
-
-            const edges = new THREE.EdgesGeometry(geometry, 1);
-            const wireframe = new THREE.LineSegments(edges, lineMaterial);
-            globeGroup.add(wireframe);
-
-            // Dark globe
-            const globeMaterial = new THREE.MeshBasicMaterial({
-                color: 0x000000,
-                transparent: true,
-                opacity: 0.8,
-            });
-
-            const globe = new THREE.Mesh(geometry, globeMaterial);
-            globe.scale.setScalar(0.99);
-            globeGroup.add(globe);
-
             // Stars
             const stars = getStarfield({
                 numStars: 1000,
@@ -79,24 +55,61 @@ export default function GlobeScene({ animating }: GlobeSceneProps) {
 
             scene.add(stars);
 
-            //Countries
-            fetch("/assets/geojson/ne_110m_land.json")
-                .then((res) => res.json())
-                .then((json) => {
-                    if (disposed) return;
+            const globeGroup = new THREE.Group();
+            scene.add(globeGroup);
 
-                    const countries = drawThreeGeo({
-                        json,
-                        radius: 2,
-                    });
+            let clearGlobe = () => {};
 
-                    globeGroup.add(countries);
+            if (withGlobe) {
+                // Globe wireframe
+                const geometry = new THREE.SphereGeometry(2);
+
+                const lineMaterial = new THREE.LineBasicMaterial({
+                    color: 0x222222,
                 });
 
-            globeGroup.rotation.z = THREE.MathUtils.degToRad(-23.4);
+                const edges = new THREE.EdgesGeometry(geometry, 1);
+                const wireframe = new THREE.LineSegments(edges, lineMaterial);
+                globeGroup.add(wireframe);
 
-            globeGroup.rotation.x += THREE.MathUtils.randFloat(-1, 1);
-            globeGroup.rotation.y += THREE.MathUtils.randFloat(-1, 1);
+                // Dark globe
+                const globeMaterial = new THREE.MeshBasicMaterial({
+                    color: 0x000000,
+                    transparent: true,
+                    opacity: 0.8,
+                });
+
+                const globe = new THREE.Mesh(geometry, globeMaterial);
+                globe.scale.setScalar(0.99);
+                globeGroup.add(globe);
+
+                //Countries
+                fetch("/assets/geojson/ne_110m_land.json")
+                    .then((res) => res.json())
+                    .then((json) => {
+                        if (disposed) return;
+
+                        const countries = drawThreeGeo({
+                            json,
+                            radius: 2,
+                        });
+
+                        globeGroup.add(countries);
+                    });
+
+                globeGroup.rotation.z = THREE.MathUtils.degToRad(-23.4);
+
+                globeGroup.rotation.x += THREE.MathUtils.randFloat(-1, 1);
+                globeGroup.rotation.y += THREE.MathUtils.randFloat(-1, 1);
+
+                clearGlobe = () => {
+                    geometry.dispose();
+                    edges.dispose();
+                    lineMaterial.dispose();
+                    globeMaterial.dispose();
+                };
+            }
+
             const animation = () => {
                 clock.current.update();
 
@@ -153,10 +166,7 @@ export default function GlobeScene({ animating }: GlobeSceneProps) {
                 window.removeEventListener("resize", handleResize);
                 document.removeEventListener("visibilitychange", handleVisibilityChange);
 
-                geometry.dispose();
-                edges.dispose();
-                lineMaterial.dispose();
-                globeMaterial.dispose();
+                clearGlobe();
 
                 scene.clear();
 
@@ -177,5 +187,5 @@ export default function GlobeScene({ animating }: GlobeSceneProps) {
         };
     }, [clock]);
 
-    return <div ref={containerRef} className="absolute inset-0 z-0 overflow-hidden" />;
+    return <div ref={containerRef} className="absolute inset-0 z-[-1] overflow-hidden" />;
 }

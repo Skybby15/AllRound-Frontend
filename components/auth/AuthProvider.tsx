@@ -25,6 +25,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }, []);
 
     const logoutAct = useCallback(() => {
+        //TODO : add a method in backend for logout that clears the cookie for auth
         setAccessToken(null);
     }, []);
 
