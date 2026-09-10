@@ -3,6 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 import { authApi } from "@/reactquery/apiClients";
+import { setWideAccessToken } from "@/reactquery/tokenStore";
 
 type AuthContextType = {
     accessToken: string | null;
@@ -22,11 +23,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const loginAct = useCallback((token: string) => {
         setAccessToken(token);
+        setWideAccessToken(token);
     }, []);
 
     const logoutAct = useCallback(() => {
-        //TODO : add a method in backend for logout that clears the cookie for auth
         setAccessToken(null);
+        setWideAccessToken(null);
     }, []);
 
     const refresh = useCallback(async (): Promise<boolean> => {

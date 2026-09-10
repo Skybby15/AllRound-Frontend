@@ -26,6 +26,7 @@ import { Label } from "../ui/label";
 import { useRouter } from "next/navigation";
 import { useAuth } from "../auth/AuthProvider";
 import { cn } from "@/lib/utils";
+import useLogout from "@/app/(public)/auth/_hooks/useLogout";
 
 type MenuButtonProps = {
     label: string;
@@ -52,7 +53,7 @@ function MenuButton({ label, icon: Icon, className }: MenuButtonProps) {
 }
 
 export function MenuSidebar() {
-    const { logoutAct } = useAuth();
+    const { mutate : logoutFn } = useLogout();
 
     const [openSpheres, setIsOpenSpheres] = useState(true);
     const [openAccount, setIsOpenAccount] = useState(true);
@@ -60,7 +61,7 @@ export function MenuSidebar() {
     const router = useRouter();
 
     const onLogout = () => {
-        logoutAct();
+        logoutFn();
         router.push("/auth");
     };
 

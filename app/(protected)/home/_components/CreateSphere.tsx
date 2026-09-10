@@ -3,15 +3,28 @@ import { CreateEmptyDialog } from "./CreateEmptyDialog";
 import CreateSphereButton from "./CreateSphereButton";
 import { CreateFromFolderDialog } from "./CreateFromFolderDialog";
 import { useRouter } from "next/navigation";
+import useCreateSphere from "../_hooks/useCreateSphere";
+import { CreateSphereRequest } from "@/api";
+import { useEffect } from "react";
+import { toast } from "sonner";
 
 export default function CreateSphere() {
     const router = useRouter();
+    const { mutate: createSphereFn, status: createStatus } = useCreateSphere();
 
-    const handleCreateEmptySphere = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        console.log("Creating empty sphere...");
-        router.push("/explore");
+    const handleCreateEmptySphere = (name: string) => {
+        const request : CreateSphereRequest = {
+            name: name
+        }
+        createSphereFn(request)
     };
+
+    useEffect(()=>{
+        if(createStatus == "success")
+            router.push("/explore");
+        else if(createStatus == "error")
+            toast.error("There was an error while trying to create your sphere.")
+    },[createStatus])
 
     return (
         <div className="flex flex-col h-full items-center">

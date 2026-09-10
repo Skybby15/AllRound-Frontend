@@ -16,15 +16,26 @@ import { ReactElement } from "react";
 
 type CreateEmptyDialogProps = {
     render?: ReactElement | undefined;
-    onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+    onSubmit: (name: string) => void;
 };
 
 export function CreateEmptyDialog({ render, onSubmit }: CreateEmptyDialogProps) {
+
+    function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+
+        const formData = new FormData(event.currentTarget);
+
+        const name = formData.get("sphereName") as string;
+
+        onSubmit(name);
+    }
+
     return (
         <Dialog>
             <DialogTrigger render={render} />
             <DialogContent className="sm:max-w-sm">
-                <form onSubmit={onSubmit}>
+                <form onSubmit={handleSubmit}>
                     <DialogHeader>
                         <DialogTitle>Create new Sphere</DialogTitle>
                         <DialogDescription>Name your new Sphere</DialogDescription>
