@@ -41,9 +41,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             );
 
             setAccessToken(response.accessToken);
+            setWideAccessToken(response.accessToken);
             return true;
         } catch {
             setAccessToken(null);
+            setWideAccessToken(null);
             return false;
         }
     }, []);

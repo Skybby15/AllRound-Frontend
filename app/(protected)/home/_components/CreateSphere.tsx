@@ -10,21 +10,19 @@ import { toast } from "sonner";
 
 export default function CreateSphere() {
     const router = useRouter();
-    const { mutate: createSphereFn, status: createStatus } = useCreateSphere();
+    const { mutate: createSphereFn, status: createStatus, error } = useCreateSphere();
 
     const handleCreateEmptySphere = (name: string) => {
-        const request : CreateSphereRequest = {
-            name: name
-        }
-        createSphereFn(request)
+        const request: CreateSphereRequest = {
+            name: name,
+        };
+        createSphereFn(request);
     };
 
-    useEffect(()=>{
-        if(createStatus == "success")
-            router.push("/explore");
-        else if(createStatus == "error")
-            toast.error("There was an error while trying to create your sphere.")
-    },[createStatus])
+    useEffect(() => {
+        if (createStatus == "success") router.push("/spheres/10");
+        else if (createStatus == "error") toast.error(error.message);
+    }, [createStatus]);
 
     return (
         <div className="flex flex-col h-full items-center">

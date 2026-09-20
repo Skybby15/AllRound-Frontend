@@ -20,7 +20,6 @@ type CreateEmptyDialogProps = {
 };
 
 export function CreateEmptyDialog({ render, onSubmit }: CreateEmptyDialogProps) {
-
     function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
 

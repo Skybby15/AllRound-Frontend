@@ -1,22 +1,19 @@
-import { CreateSphereRequest, CreateSphereResponse, ResponseError } from "@/api";
-import { useAuth } from "@/components/auth/AuthProvider";
+import { CreateSphereRequest, ResponseError } from "@/api";
 import { sphereApi } from "@/reactquery/apiClients";
 import { ApiError } from "@/reactquery/ApiError";
 import { ErrorResponse } from "@/reactquery/ErrorResponse";
-import { useMutation } from "@tanstack/react-query";
-
-
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export default function useCreateSphere() {
-    return useMutation({
-        mutationFn: async (request: CreateSphereRequest ) => {
-            try {
-            const response = await sphereApi.spherePost({
-                    createSphereRequest: request,
-                },
+    const queryClient = useQueryClient();
 
-            )
-            return response;
+    return useMutation({
+        mutationFn: async (request: CreateSphereRequest) => {
+            try {
+                const response = await sphereApi.spherePost({
+                    createSphereRequest: request,
+                });
+                return response;
             } catch (error) {
                 if (error instanceof ResponseError) {
                     const body = (await error.response.json()) as ErrorResponse;
@@ -27,5 +24,11 @@ export default function useCreateSphere() {
                 throw new Error("Something went wrong.");
             }
         },
-    })
+
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ["spheres"],
+            });
+        },
+    });
 }

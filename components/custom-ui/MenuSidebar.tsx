@@ -6,7 +6,7 @@ import {
     SidebarHeader,
 } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback } from "../ui/avatar";
-import { Button } from "../ui/button";
+import { Button, buttonVariants } from "../ui/button";
 import { Separator } from "../ui/separator";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
 import { useState } from "react";
@@ -14,6 +14,7 @@ import {
     ChevronDown,
     ChevronUp,
     EyeDashed,
+    HomeIcon,
     LockKeyhole,
     LogOut,
     LucideIcon,
@@ -24,9 +25,10 @@ import {
 } from "lucide-react";
 import { Label } from "../ui/label";
 import { useRouter } from "next/navigation";
-import { useAuth } from "../auth/AuthProvider";
 import { cn } from "@/lib/utils";
 import useLogout from "@/app/(public)/auth/_hooks/useLogout";
+import { VariantProps } from "class-variance-authority";
+import { Button as ButtonPrimitive } from "@base-ui/react/button";
 
 type MenuButtonProps = {
     label: string;
@@ -34,9 +36,14 @@ type MenuButtonProps = {
     className: string;
 };
 
-function MenuButton({ label, icon: Icon, className }: MenuButtonProps) {
+function MenuButton({
+    label,
+    icon: Icon,
+    className,
+    ...props
+}: MenuButtonProps & ButtonPrimitive.Props) {
     return (
-        <Button className="group/menuButton cursor-pointer" variant="outline">
+        <Button className="group/menuButton cursor-pointer" variant="outline" {...props}>
             <div
                 className={cn(
                     " flex flex-row items-center overflow-hidden",
@@ -53,7 +60,7 @@ function MenuButton({ label, icon: Icon, className }: MenuButtonProps) {
 }
 
 export function MenuSidebar() {
-    const { mutate : logoutFn } = useLogout();
+    const { mutate: logoutFn } = useLogout();
 
     const [openSpheres, setIsOpenSpheres] = useState(true);
     const [openAccount, setIsOpenAccount] = useState(true);
@@ -63,6 +70,14 @@ export function MenuSidebar() {
     const onLogout = () => {
         logoutFn();
         router.push("/auth");
+    };
+
+    const onHome = () => {
+        router.push("/home");
+    };
+
+    const onMySpheres = () => {
+        router.push("/spheres");
     };
 
     return (
@@ -77,6 +92,11 @@ export function MenuSidebar() {
             </SidebarHeader>
             <SidebarContent>
                 <Separator />
+                <SidebarGroup className="items-center">
+                    <Button className="w-max" onClick={onHome}>
+                        <HomeIcon />
+                    </Button>
+                </SidebarGroup>
                 <SidebarGroup>
                     <Collapsible
                         open={openSpheres}
@@ -109,6 +129,7 @@ export function MenuSidebar() {
                                 label="My Spheres"
                                 className="group-hover/menuButton:max-w-26"
                                 icon={Orbit}
+                                onClick={onMySpheres}
                             />
                             <MenuButton
                                 label="Favorites"
