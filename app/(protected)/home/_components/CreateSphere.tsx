@@ -1,0 +1,55 @@
+import { Folder, Globe, Orbit } from "lucide-react";
+import { CreateEmptyDialog } from "./CreateEmptyDialog";
+import CreateSphereButton from "./CreateSphereButton";
+import { CreateFromFolderDialog } from "./CreateFromFolderDialog";
+import { useRouter } from "next/navigation";
+import useCreateSphere from "../_hooks/useCreateSphere";
+import { CreateSphereRequest } from "@/api";
+import { useEffect } from "react";
+import { toast } from "sonner";
+
+export default function CreateSphere() {
+    const router = useRouter();
+    const { mutate: createSphereFn, status: createStatus, error } = useCreateSphere();
+
+    const handleCreateEmptySphere = (name: string) => {
+        const request: CreateSphereRequest = {
+            name: name,
+        };
+        createSphereFn(request);
+    };
+
+    useEffect(() => {
+        if (createStatus == "success") router.push("/spheres/10");
+        else if (createStatus == "error") toast.error(error.message);
+    }, [createStatus, error, router]);
+
+    return (
+        <div className="flex flex-col h-full items-center">
+            <h1 className="mt-20 text-4xl">Create your next Sphere</h1>
+            <div className="flex items-center justify-between px-30 w-full h-full">
+                <CreateEmptyDialog
+                    render={
+                        <CreateSphereButton className="z-10">
+                            <Orbit className="absolute inset-0 m-auto size-32 opacity-20" />
+                            Empty Sphere
+                        </CreateSphereButton>
+                    }
+                    onSubmit={handleCreateEmptySphere}
+                />
+                <CreateFromFolderDialog
+                    render={
+                        <CreateSphereButton className="hover:bg-[#0355fc] z-0">
+                            <Folder className="absolute inset-0 m-auto size-32 opacity-20" />
+                            From Folder
+                        </CreateSphereButton>
+                    }
+                />
+                <CreateSphereButton>
+                    <Globe className="absolute inset-0 m-auto size-32 opacity-20" />
+                    Copy Sphere
+                </CreateSphereButton>
+            </div>
+        </div>
+    );
+}

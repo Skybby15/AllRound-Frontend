@@ -13,7 +13,7 @@ export default function AuthLayout() {
     const [animate, setAnimate] = useState(true);
 
     return (
-        <main className="bg-black">
+        <main className="bg-transparent">
             <div className="grid lg:grid-cols-2">
                 {/* Background */}
                 <GlobeScene animating={animate} />

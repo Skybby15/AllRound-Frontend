@@ -3,6 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 import { authApi } from "@/reactquery/apiClients";
+import { setWideAccessToken } from "@/reactquery/tokenStore";
 
 type AuthContextType = {
     accessToken: string | null;
@@ -22,10 +23,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const loginAct = useCallback((token: string) => {
         setAccessToken(token);
+        setWideAccessToken(token);
     }, []);
 
     const logoutAct = useCallback(() => {
         setAccessToken(null);
+        setWideAccessToken(null);
     }, []);
 
     const refresh = useCallback(async (): Promise<boolean> => {
@@ -38,9 +41,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             );
 
             setAccessToken(response.accessToken);
+            setWideAccessToken(response.accessToken);
             return true;
         } catch {
             setAccessToken(null);
+            setWideAccessToken(null);
             return false;
         }
     }, []);
