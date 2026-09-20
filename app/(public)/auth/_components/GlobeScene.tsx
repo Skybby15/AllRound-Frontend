@@ -185,7 +185,7 @@ export default function GlobeScene({ animating, withGlobe = true }: GlobeScenePr
             disposed = true;
             cleanup.then((fn) => fn?.());
         };
-    }, [clock]);
+    }, [clock, withGlobe]);
 
     return <div ref={containerRef} className="absolute inset-0 z-[-1] overflow-hidden" />;
 }

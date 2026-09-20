@@ -22,7 +22,7 @@ export default function CreateSphere() {
     useEffect(() => {
         if (createStatus == "success") router.push("/spheres/10");
         else if (createStatus == "error") toast.error(error.message);
-    }, [createStatus]);
+    }, [createStatus, error, router]);
 
     return (
         <div className="flex flex-col h-full items-center">

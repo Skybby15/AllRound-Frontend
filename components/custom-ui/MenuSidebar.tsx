@@ -6,7 +6,7 @@ import {
     SidebarHeader,
 } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback } from "../ui/avatar";
-import { Button, buttonVariants } from "../ui/button";
+import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
 import { useState } from "react";
@@ -27,7 +27,6 @@ import { Label } from "../ui/label";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import useLogout from "@/app/(public)/auth/_hooks/useLogout";
-import { VariantProps } from "class-variance-authority";
 import { Button as ButtonPrimitive } from "@base-ui/react/button";
 
 type MenuButtonProps = {
