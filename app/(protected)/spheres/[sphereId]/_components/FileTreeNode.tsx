@@ -1,8 +1,24 @@
-import { File, FilePlusIcon, FolderClosed, FolderOpen, FolderPlusIcon, MoreHorizontal } from "lucide-react";
+import {
+    File,
+    FilePlusIcon,
+    FolderClosed,
+    FolderOpen,
+    FolderPlusIcon,
+    MoreHorizontal,
+} from "lucide-react";
 import { useState } from "react";
 import { TreeNode } from "../_types/TreeNode";
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuGroup,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuShortcut,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function FileTree({ nodes }: { nodes: TreeNode[] }) {
     return (
@@ -39,34 +55,34 @@ function FileTreeNode({ node }: { node: TreeNode }) {
                 </button>
 
                 <DropdownMenu>
-                    <DropdownMenuTrigger render={
-                        <Button
-                            className="ml-2 scale-0 transition-transform duration-200 group-hover:scale-100"
-                            variant="secondary"
-                            size="icon-sm"
-                            onClick={() => {
-                                // open context menu / options
-                            }}
-                        >
-                            <MoreHorizontal className="scale-130" />
-                        </Button>
-                    } />
-                        <DropdownMenuContent className="w-40 p-2">
-                            <DropdownMenuGroup>
-                                <DropdownMenuLabel>Folder options</DropdownMenuLabel>
-                                <DropdownMenuItem>
-                                    <FolderPlusIcon/>
-                                    Add Folder
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <FilePlusIcon/>
-                                    Add File
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    Details
-                                </DropdownMenuItem>
-                            </DropdownMenuGroup>
-                        </DropdownMenuContent>
+                    <DropdownMenuTrigger
+                        render={
+                            <Button
+                                className="ml-2 scale-0 transition-transform duration-200 group-hover:scale-100"
+                                variant="secondary"
+                                size="icon-sm"
+                                onClick={() => {
+                                    // open context menu / options
+                                }}
+                            >
+                                <MoreHorizontal className="scale-130" />
+                            </Button>
+                        }
+                    />
+                    <DropdownMenuContent className="w-40 p-2">
+                        <DropdownMenuGroup>
+                            <DropdownMenuLabel>Folder options</DropdownMenuLabel>
+                            <DropdownMenuItem>
+                                <FolderPlusIcon />
+                                Add Folder
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>
+                                <FilePlusIcon />
+                                Add File
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>Details</DropdownMenuItem>
+                        </DropdownMenuGroup>
+                    </DropdownMenuContent>
                 </DropdownMenu>
             </div>
 
