@@ -18,18 +18,32 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-export default function FileTree({ nodes }: { nodes: TreeNode[] }) {
+type DialogShowProps = {
+    showAddFileDialogForNode: (nodeId: number | undefined) => void;
+    showAddFolderDialogForNode: (nodeId: number | undefined) => void;
+};
+
+export default function SphereNodeTree({
+    nodes,
+    dialogsProps,
+}: {
+    nodes: TreeNode[];
+    dialogsProps: DialogShowProps;
+}) {
     return (
         <div>
             {nodes.map((node) => (
-                <FileTreeNode key={node.id} node={node} />
+                <NodeTree key={node.id} node={node} dialogProps={dialogsProps} />
             ))}
         </div>
     );
 }
 
-function FileTreeNode({ node }: { node: TreeNode }) {
+function NodeTree({ node, dialogProps }: { node: TreeNode; dialogProps: DialogShowProps }) {
     const [open, setOpen] = useState(false);
+    const { showAddFileDialogForNode, showAddFolderDialogForNode } = dialogProps;
+
+    if (!node.id) return;
 
     if (node.type === "FILE") {
         return (
@@ -59,9 +73,6 @@ function FileTreeNode({ node }: { node: TreeNode }) {
                                 className="ml-2 scale-0 transition-transform duration-200 group-hover:scale-100"
                                 variant="secondary"
                                 size="icon-sm"
-                                onClick={() => {
-                                    // open context menu / options
-                                }}
                             >
                                 <MoreHorizontal className="scale-130" />
                             </Button>
@@ -70,13 +81,13 @@ function FileTreeNode({ node }: { node: TreeNode }) {
                     <DropdownMenuContent className="w-40 p-2">
                         <DropdownMenuGroup>
                             <DropdownMenuLabel>Folder options</DropdownMenuLabel>
-                            <DropdownMenuItem>
-                                <FolderPlusIcon />
-                                Add Folder
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => showAddFileDialogForNode(node.id)}>
                                 <FilePlusIcon />
                                 Add File
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => showAddFolderDialogForNode(node.id)}>
+                                <FolderPlusIcon />
+                                Add Folder
                             </DropdownMenuItem>
                             <DropdownMenuItem>Details</DropdownMenuItem>
                         </DropdownMenuGroup>
@@ -86,7 +97,7 @@ function FileTreeNode({ node }: { node: TreeNode }) {
 
             {open && node.children.length > 0 && (
                 <div className="relative ml-3 pl-4 border-l border-gray-400">
-                    <FileTree nodes={node.children} />
+                    <SphereNodeTree nodes={node.children} dialogsProps={dialogProps} />
                 </div>
             )}
         </div>

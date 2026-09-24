@@ -83,7 +83,7 @@ export default function LoginForm({ switchupFn }: LoginFormProps) {
                 <CardTitle>Login to your account</CardTitle>
                 <CardDescription>Enter your email below to login to your account</CardDescription>
                 <CardAction>
-                    <Button variant="link" onClick={switchupFn}>
+                    <Button className="cursor-pointer" variant="link" onClick={switchupFn}>
                         Sign Up
                     </Button>
                 </CardAction>

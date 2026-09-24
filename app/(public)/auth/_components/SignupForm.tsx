@@ -80,8 +80,9 @@ export default function SignupForm({ switchupFn }: SignupFormProps) {
             <CardHeader>
                 <CardTitle>Sign up</CardTitle>
                 <CardDescription>Enter your details below to create an account</CardDescription>
-                <CardAction>
-                    <Button variant="link" onClick={switchupFn}>
+                <CardAction className="flex items-center">
+                    <p className="text-primary">Already have an account?</p>
+                    <Button className="cursor-pointer" variant="link" onClick={switchupFn}>
                         Log in
                     </Button>
                 </CardAction>
