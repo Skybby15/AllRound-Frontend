@@ -1,7 +1,7 @@
-import { NodeTreeInfoDTO } from "@/api";
+import { NodeTreeDTO } from "@/api";
 import { TreeNode } from "../_types/TreeNode";
 
-export default function ConstructNodeTree(nodes: NodeTreeInfoDTO[]) {
+export default function ConstructNodeTree(nodes: NodeTreeDTO[]) {
     const nodeMap = new Map<number, TreeNode>();
 
     // Create TreeNodes

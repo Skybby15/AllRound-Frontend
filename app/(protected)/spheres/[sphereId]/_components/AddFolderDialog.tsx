@@ -5,17 +5,38 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog";
-import FolderDropzone from "./FolderDropzone";
+import FolderDropzone, { FolderMap } from "./FolderDropzone";
 import { RefObject } from "react";
+import useAddNodeTree from "../_hooks/useAddNodeTree";
+import { AddNodeRequest, NodeAddDTO } from "@/api";
+import CreateAddNodeTreeFromFolders from "../_utils/CreateAddNodeTreeFromFolders";
 
 type AddFolderDialogProps = {
     show: boolean;
     setShow: (value: boolean) => void;
+    sphereId: number;
     nodeIdRef: RefObject<number | undefined>;
 };
 
-export default function AddFolderDialog({ show, setShow, nodeIdRef }: AddFolderDialogProps) {
-    const nodeId = nodeIdRef.current;
+export default function AddFolderDialog({ show, setShow, sphereId, nodeIdRef }: AddFolderDialogProps) {
+    const { mutate, status } = useAddNodeTree(sphereId);
+
+    const handleFoldersSelected = (folders: FolderMap) => 
+    {
+        const parentNodeId = nodeIdRef.current;
+
+        const nodes :  Array<NodeAddDTO> = CreateAddNodeTreeFromFolders(folders);
+
+        nodes.forEach(console.log)
+
+        const request : AddNodeRequest = {
+            sphereId,
+            parentNodeId,
+            nodes
+        }  
+
+        mutate(request)
+    }
 
     return (
         <Dialog open={show} onOpenChange={setShow}>
@@ -23,14 +44,11 @@ export default function AddFolderDialog({ show, setShow, nodeIdRef }: AddFolderD
                 <DialogHeader>
                     <DialogTitle>Add Folder Dialog</DialogTitle>
                     <DialogDescription>
-                        This action cannot be undone. This will permanently delete your account and
-                        remove your data from our servers.
+                        Use this dropzone to add one or more folders to your sphere
                     </DialogDescription>
                 </DialogHeader>
                 <FolderDropzone
-                    onFilesSelected={(files) => {
-                        console.log("attaching folders under node: " + nodeId)
-                    }}
+                    onFoldersSelected={handleFoldersSelected}
                 />
             </DialogContent>
         </Dialog>

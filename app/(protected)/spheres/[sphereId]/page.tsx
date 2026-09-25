@@ -110,11 +110,13 @@ export default function SpherePage() {
             <AddFileDialog
                 show={showAddFileDialog}
                 setShow={setShowAddFileDialog}
+                sphereId={Number(sphereId)}
                 nodeIdRef={nodeIdRef}
             />
             <AddFolderDialog
                 show={showAddFolderDialog}
                 setShow={setShowAddFolderDialog}
+                sphereId={Number(sphereId)}
                 nodeIdRef={nodeIdRef}
             />
         </main>

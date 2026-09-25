@@ -4,29 +4,54 @@ import { useRef, useState } from "react";
 import { FolderOpen, UploadCloud } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
+import { Folder } from "../_utils/CreateAddNodeTreeFromFolders";
 
-export interface DroppedFile {
-    file: File;
-    path: string;
-}
+export type FolderMap = Map<string, Folder | File>;
 
 interface FolderDropzoneProps {
-    onFilesSelected: (files: DroppedFile[]) => void;
+    onFoldersSelected: (folders: FolderMap) => void;
 }
 
-export default function FolderDropzone({ onFilesSelected }: FolderDropzoneProps) {
+export default function FolderDropzone({ onFoldersSelected }: FolderDropzoneProps) {
     const inputRef = useRef<HTMLInputElement>(null);
     const [isDragging, setIsDragging] = useState(false);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files) return;
 
-        const files: DroppedFile[] = Array.from(e.target.files).map((file) => ({
-            file,
-            path: file.webkitRelativePath || file.name,
-        }));
+        const root: FolderMap = new Map();
 
-        onFilesSelected(files);
+        for (const file of Array.from(e.target.files)) {
+            const parts = (file.webkitRelativePath || file.name).split("/");
+
+            let current = root;
+
+            for (let i = 0; i < parts.length; i++) {
+                const part = parts[i];
+                const isFile = i === parts.length - 1;
+
+                if (isFile) {
+                    current.set(part, file);
+                    continue;
+                }
+
+                let folder = current.get(part);
+
+                if (!folder || folder instanceof File) {
+                    folder = {
+                        children: new Map(),
+                    };
+
+                    current.set(part, folder);
+                }
+
+                current = folder.children;
+            }
+        }
+
+        if (root.size > 0) {
+            onFoldersSelected(root);
+        }
     };
 
     const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
@@ -38,21 +63,25 @@ export default function FolderDropzone({ onFilesSelected }: FolderDropzoneProps)
         const entries = items
             .filter((item) => item.kind === "file")
             .map((item) => item.webkitGetAsEntry())
-            .filter((entry): entry is FileSystemEntry => entry !== null);
+            .filter(
+                (entry): entry is FileSystemEntry =>
+                    entry !== null
+            );
 
-        const files: DroppedFile[] = [];
+        const root: FolderMap = new Map();
 
         for (const entry of entries) {
-            //ignore direct files dragged
             if (entry.isDirectory) {
-                const directoryFiles = await readDirectory(entry as FileSystemDirectoryEntry);
+                const folder = await readDirectory(
+                    entry as FileSystemDirectoryEntry
+                );
 
-                files.push(...directoryFiles);
+                root.set(entry.name, folder);
             }
         }
 
-        if (files.length > 0) {
-            onFilesSelected(files);
+        if (root.size > 0) {
+            onFoldersSelected(root);
         }
     };
 
@@ -107,31 +136,30 @@ function getFile(entry: FileSystemFileEntry): Promise<File> {
 }
 
 async function readDirectory(
-    directory: FileSystemDirectoryEntry,
-    parentPath = directory.name
-): Promise<DroppedFile[]> {
-    const reader = directory.createReader();
+    directory: FileSystemDirectoryEntry
+): Promise<Folder> {
+    const folder: Folder = {
+        children: new Map(),
+    };
 
+    const reader = directory.createReader();
     const entries = await readAllEntries(reader);
 
-    const files: DroppedFile[] = [];
-
     for (const entry of entries) {
-        const path = `${parentPath}/${entry.name}`;
-
         if (entry.isFile) {
             const file = await getFile(entry as FileSystemFileEntry);
 
-            files.push({
-                file,
-                path,
-            });
+            folder.children.set(entry.name, file);
         } else if (entry.isDirectory) {
-            files.push(...(await readDirectory(entry as FileSystemDirectoryEntry, path)));
+            const childFolder = await readDirectory(
+                entry as FileSystemDirectoryEntry
+            );
+
+            folder.children.set(entry.name, childFolder);
         }
     }
 
-    return files;
+    return folder;
 }
 
 function readAllEntries(reader: FileSystemDirectoryReader): Promise<FileSystemEntry[]> {
