@@ -4,32 +4,48 @@ export type Folder = {
     children: Map<string, Folder | File>,
 };
 
+
 export default function CreateNodeAddDTOListFromFolders(
     folderMap: Map<string, Folder | File>
-): NodeAddDTO[] {
+) {
     const nodes: NodeAddDTO[] = [];
+    let clientInfoList: Map<string,File> = new Map();
 
-    for (const [name, value] of folderMap) {
-        if (value instanceof File) {
+    for (const [name, node] of folderMap) {
+        if (node instanceof File) {
             // Leaf = file
+            const clientId = crypto.randomUUID();
+
             nodes.push({
                 name,
                 type: "FILE",
-                fileSize: value.size,
-                contentType: value.type,
+                fileSize: node.size,
+                fileContentType: node.type,
+                fileClientId: clientId,
                 folderChildren: null,
             });
+
+            clientInfoList.set(clientId,node)
+
         } else {
             // Folder = recursively process its children
+            const {nodes: subNodes, clientInfoList: subClientInfo} = CreateNodeAddDTOListFromFolders(node.children)
+
             nodes.push({
                 name,
                 type: "FOLDER",
                 fileSize: null,
-                contentType: null,
-                folderChildren: CreateNodeAddDTOListFromFolders(value.children),
+                fileContentType: null,
+                fileClientId: null,
+                folderChildren: subNodes,
             });
+
+            clientInfoList = new Map([
+                ...clientInfoList,
+                ...subClientInfo
+            ])
         }
     }
 
-    return nodes;
+    return {nodes, clientInfoList};
 }

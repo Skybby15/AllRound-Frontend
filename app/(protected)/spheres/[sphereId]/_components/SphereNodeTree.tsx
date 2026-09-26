@@ -33,13 +33,13 @@ export default function SphereNodeTree({
     return (
         <div>
             {nodes.map((node) => (
-                <NodeTree key={node.id} node={node} dialogProps={dialogsProps} />
+                <NodeItem key={node.id} node={node} dialogProps={dialogsProps} />
             ))}
         </div>
     );
 }
 
-function NodeTree({ node, dialogProps }: { node: TreeNode; dialogProps: DialogShowProps }) {
+function NodeItem({ node, dialogProps }: { node: TreeNode; dialogProps: DialogShowProps }) {
     const [open, setOpen] = useState(false);
     const { showAddFileDialogForNode, showAddFolderDialogForNode } = dialogProps;
 

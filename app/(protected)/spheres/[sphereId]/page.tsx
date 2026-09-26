@@ -81,7 +81,7 @@ export default function SpherePage() {
                                     </DropdownMenuItem>
                                     <DropdownMenuItem
                                         onClick={() => {
-                                            showAddFileDialogForNode();
+                                            showAddFolderDialogForNode();
                                         }}
                                     >
                                         <FolderPlusIcon />
@@ -97,7 +97,7 @@ export default function SpherePage() {
                     </div>
                 </div>
 
-                <div className="w-max max-w-3/4 h-max max-h-full ml-5 overflow-auto border-b border-b-gray-400 pb-1">
+                <div className="w-max max-w-3/4 max-h-9/10 ml-5 overflow-auto border-b border-b-gray-400 pb-1">
                     <SphereNodeTree
                         nodes={sphereNodes}
                         dialogsProps={{

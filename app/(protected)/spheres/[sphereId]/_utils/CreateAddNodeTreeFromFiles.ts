@@ -3,15 +3,26 @@ import { NodeAddDTO } from "@/api";
 
 export default function CreateAddNodeTreeFromFiles(files: File[])
 {
-    return files.map((file) => {
+    const clientInfoList : Map<string,File> = new Map();
+    const nodes : NodeAddDTO[] = []
+
+    files.forEach((file) => {
+        const clientId = crypto.randomUUID();
+
         const dto : NodeAddDTO = {
             name: file.name,
             type: "FILE",
+
             fileSize: file.size,
-            contentType: file.type,
+            fileContentType: file.type,
+            fileClientId: clientId,
+
             folderChildren: null
         }
 
-        return dto;
+        nodes.push(dto)
+        clientInfoList.set(clientId,file)
     })
+
+    return {nodes, clientInfoList}
 }

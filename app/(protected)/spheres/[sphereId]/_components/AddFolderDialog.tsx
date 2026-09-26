@@ -25,7 +25,7 @@ export default function AddFolderDialog({ show, setShow, sphereId, nodeIdRef }: 
     {
         const parentNodeId = nodeIdRef.current;
 
-        const nodes :  Array<NodeAddDTO> = CreateAddNodeTreeFromFolders(folders);
+        const {nodes, clientInfoList} = CreateAddNodeTreeFromFolders(folders);
 
         nodes.forEach(console.log)
 
@@ -35,7 +35,7 @@ export default function AddFolderDialog({ show, setShow, sphereId, nodeIdRef }: 
             nodes
         }  
 
-        mutate(request)
+        mutate({request,clientInfoList})
     }
 
     return (
@@ -44,7 +44,7 @@ export default function AddFolderDialog({ show, setShow, sphereId, nodeIdRef }: 
                 <DialogHeader>
                     <DialogTitle>Add Folder Dialog</DialogTitle>
                     <DialogDescription>
-                        Use this dropzone to add one or more folders to your sphere
+                    Use this dropzone to add one or more folders to your sphere. Empty folders will be added ONLY if dragged , not browsed.
                     </DialogDescription>
                 </DialogHeader>
                 <FolderDropzone

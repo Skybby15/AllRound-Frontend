@@ -1,5 +1,5 @@
-import { NodeTreeInfoDTO } from "@/api";
+import { NodeTreeDTO } from "@/api";
 
-export type TreeNode = NodeTreeInfoDTO & {
+export type TreeNode = NodeTreeDTO & {
     children: TreeNode[];
 };
