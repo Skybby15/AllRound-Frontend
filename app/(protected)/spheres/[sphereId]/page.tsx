@@ -1,7 +1,17 @@
 "use client";
 
 import { colors } from "@/app/colors";
-import { FilePlusIcon, FolderPlusIcon, Orbit, Plus, Settings } from "lucide-react";
+import {
+    DownloadIcon,
+    FileIcon,
+    FilePlusIcon,
+    FolderPlusIcon,
+    Orbit,
+    Plus,
+    Settings,
+    SidebarCloseIcon,
+    XIcon,
+} from "lucide-react";
 import { useParams } from "next/navigation";
 import useGetNodeTree from "./_hooks/useGetNodeTree";
 import SphereNodeTree from "./_components/SphereNodeTree";
@@ -18,6 +28,8 @@ import {
 import { useRef, useState } from "react";
 import AddFileDialog from "./_components/AddFileDialog";
 import AddFolderDialog from "./_components/AddFolderDialog";
+import { TreeNode } from "./_types/TreeNode";
+import SelectedFileInfo from "./_components/SelectedFileInfo";
 
 export default function SpherePage() {
     const { sphereId } = useParams<{ sphereId: string }>();
@@ -28,6 +40,8 @@ export default function SpherePage() {
     const [showAddFolderDialog, setShowAddFolderDialog] = useState(false);
     const nodeIdRef = useRef<number | undefined>(undefined);
 
+    const [selectedFileNode, setSelectedFileNode] = useState<TreeNode | null>(null);
+
     const showAddFileDialogForNode = (nodeId: number | undefined = undefined) => {
         nodeIdRef.current = nodeId;
         setShowAddFileDialog(true);
@@ -36,6 +50,10 @@ export default function SpherePage() {
     const showAddFolderDialogForNode = (nodeId: number | undefined = undefined) => {
         nodeIdRef.current = nodeId;
         setShowAddFolderDialog(true);
+    };
+
+    const onSelectedFilePopupClose = () => {
+        setSelectedFileNode(null);
     };
 
     if (isLoading) {
@@ -51,11 +69,11 @@ export default function SpherePage() {
     console.log(sphereNodes);
 
     return (
-        <main className="h-screen w-screen content-center">
+        <main className="flex h-screen w-screen items-center">
             <div className="bg-secondary/50 border-secondary border-10 w-3/4 min-w-100 h-3/4 min-h-100 rounded-lg overflow-hidden">
                 <div className="flex justify-between px-5 py-3">
                     <h1 className="flex items-center gap-2 text-2xl font-bold">
-                        <Orbit color={colors.primary2} />
+                        <Orbit color={colors.primary2HEX} />
                         Sphere Name
                     </h1>
 
@@ -97,16 +115,22 @@ export default function SpherePage() {
                     </div>
                 </div>
 
-                <div className="w-max max-w-3/4 max-h-9/10 ml-5 overflow-auto border-b border-b-gray-400 pb-1">
-                    <SphereNodeTree
-                        nodes={sphereNodes}
-                        dialogsProps={{
-                            showAddFileDialogForNode,
-                            showAddFolderDialogForNode,
-                        }}
-                    />
+                <div className="w-full min-w-100 max-h-9/10 overflow-auto border-b border-b-gray-400 pb-1">
+                    <div className="relative ml-2 pl-4">
+                        <SphereNodeTree
+                            nodes={sphereNodes}
+                            dialogsProps={{
+                                showAddFileDialogForNode,
+                                showAddFolderDialogForNode,
+                                setSelectedFileNode,
+                            }}
+                        />
+                    </div>
                 </div>
             </div>
+            {selectedFileNode && (
+                <SelectedFileInfo node={selectedFileNode} onClose={onSelectedFilePopupClose} />
+            )}
             <AddFileDialog
                 show={showAddFileDialog}
                 setShow={setShowAddFileDialog}

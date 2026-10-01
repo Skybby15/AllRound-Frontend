@@ -63,18 +63,13 @@ export default function FolderDropzone({ onFoldersSelected }: FolderDropzoneProp
         const entries = items
             .filter((item) => item.kind === "file")
             .map((item) => item.webkitGetAsEntry())
-            .filter(
-                (entry): entry is FileSystemEntry =>
-                    entry !== null
-            );
+            .filter((entry): entry is FileSystemEntry => entry !== null);
 
         const root: FolderMap = new Map();
 
         for (const entry of entries) {
             if (entry.isDirectory) {
-                const folder = await readDirectory(
-                    entry as FileSystemDirectoryEntry
-                );
+                const folder = await readDirectory(entry as FileSystemDirectoryEntry);
 
                 root.set(entry.name, folder);
             }
@@ -135,9 +130,7 @@ function getFile(entry: FileSystemFileEntry): Promise<File> {
     });
 }
 
-async function readDirectory(
-    directory: FileSystemDirectoryEntry
-): Promise<Folder> {
+async function readDirectory(directory: FileSystemDirectoryEntry): Promise<Folder> {
     const folder: Folder = {
         children: new Map(),
     };
@@ -151,9 +144,7 @@ async function readDirectory(
 
             folder.children.set(entry.name, file);
         } else if (entry.isDirectory) {
-            const childFolder = await readDirectory(
-                entry as FileSystemDirectoryEntry
-            );
+            const childFolder = await readDirectory(entry as FileSystemDirectoryEntry);
 
             folder.children.set(entry.name, childFolder);
         }

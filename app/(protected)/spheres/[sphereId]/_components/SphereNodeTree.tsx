@@ -17,10 +17,15 @@ import {
     DropdownMenuLabel,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { colors } from "@/app/colors";
+import { color } from "three/tsl";
+import { cn } from "cn";
 
 type DialogShowProps = {
     showAddFileDialogForNode: (nodeId: number | undefined) => void;
     showAddFolderDialogForNode: (nodeId: number | undefined) => void;
+
+    setSelectedFileNode: (node: TreeNode) => void;
 };
 
 export default function SphereNodeTree({
@@ -41,14 +46,20 @@ export default function SphereNodeTree({
 
 function NodeItem({ node, dialogProps }: { node: TreeNode; dialogProps: DialogShowProps }) {
     const [open, setOpen] = useState(false);
-    const { showAddFileDialogForNode, showAddFolderDialogForNode } = dialogProps;
+    const { showAddFileDialogForNode, showAddFolderDialogForNode, setSelectedFileNode } =
+        dialogProps;
 
     if (!node.id) return;
 
     if (node.type === "FILE") {
         return (
-            <div className="flex w-max cursor-pointer group hover:bg-amber-700 items-center px-2 py-1 rounded-sm">
-                <File className="mr-1" />
+            <div
+                className="flex w-max cursor-pointer group hover:bg-amber-700 items-center px-2 py-1 rounded-sm"
+                onClick={() => {
+                    setSelectedFileNode(node);
+                }}
+            >
+                <File className={cn("mr-1", `text-[${colors.primaryHEX}]`, "group-hover:text-white")} />
                 {node.name}
             </div>
         );
@@ -58,10 +69,10 @@ function NodeItem({ node, dialogProps }: { node: TreeNode; dialogProps: DialogSh
         <div>
             <div className="flex w-max items-center group">
                 <button
-                    className="flex cursor-pointer items-center px-2 py-1 rounded-sm hover:bg-amber-700"
+                    className="flex cursor-pointer items-center px-2 py-1 rounded-sm group/second hover:bg-amber-700"
                     onClick={() => setOpen(!open)}
                 >
-                    {open ? <FolderOpen className="mr-1" /> : <FolderClosed className="mr-1" />}
+                    {open ? <FolderOpen className={cn("mr-1", `text-[${colors.primary2HEX}]`, "group-hover/second:text-white")} /> : <FolderClosed className={cn("mr-1", `text-[${colors.primary2HEX}]`, "group-hover/second:text-white")} />}
 
                     {node.name}
                 </button>
@@ -96,7 +107,7 @@ function NodeItem({ node, dialogProps }: { node: TreeNode; dialogProps: DialogSh
             </div>
 
             {open && node.children.length > 0 && (
-                <div className="relative ml-3 pl-4 border-l border-gray-400">
+                <div className="relative ml-5 pl-4 border-l border-gray-400">
                     <SphereNodeTree nodes={node.children} dialogsProps={dialogProps} />
                 </div>
             )}

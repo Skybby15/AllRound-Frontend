@@ -1,15 +1,12 @@
 import { NodeAddDTO } from "@/api";
 
 export type Folder = {
-    children: Map<string, Folder | File>,
+    children: Map<string, Folder | File>;
 };
 
-
-export default function CreateNodeAddDTOListFromFolders(
-    folderMap: Map<string, Folder | File>
-) {
+export default function CreateNodeAddDTOListFromFolders(folderMap: Map<string, Folder | File>) {
     const nodes: NodeAddDTO[] = [];
-    let clientInfoList: Map<string,File> = new Map();
+    let clientInfoList: Map<string, File> = new Map();
 
     for (const [name, node] of folderMap) {
         if (node instanceof File) {
@@ -25,11 +22,11 @@ export default function CreateNodeAddDTOListFromFolders(
                 folderChildren: null,
             });
 
-            clientInfoList.set(clientId,node)
-
+            clientInfoList.set(clientId, node);
         } else {
             // Folder = recursively process its children
-            const {nodes: subNodes, clientInfoList: subClientInfo} = CreateNodeAddDTOListFromFolders(node.children)
+            const { nodes: subNodes, clientInfoList: subClientInfo } =
+                CreateNodeAddDTOListFromFolders(node.children);
 
             nodes.push({
                 name,
@@ -40,12 +37,9 @@ export default function CreateNodeAddDTOListFromFolders(
                 folderChildren: subNodes,
             });
 
-            clientInfoList = new Map([
-                ...clientInfoList,
-                ...subClientInfo
-            ])
+            clientInfoList = new Map([...clientInfoList, ...subClientInfo]);
         }
     }
 
-    return {nodes, clientInfoList};
+    return { nodes, clientInfoList };
 }

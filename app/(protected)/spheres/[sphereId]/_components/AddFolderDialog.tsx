@@ -18,25 +18,29 @@ type AddFolderDialogProps = {
     nodeIdRef: RefObject<number | undefined>;
 };
 
-export default function AddFolderDialog({ show, setShow, sphereId, nodeIdRef }: AddFolderDialogProps) {
+export default function AddFolderDialog({
+    show,
+    setShow,
+    sphereId,
+    nodeIdRef,
+}: AddFolderDialogProps) {
     const { mutate, status } = useAddNodeTree(sphereId);
 
-    const handleFoldersSelected = (folders: FolderMap) => 
-    {
+    const handleFoldersSelected = (folders: FolderMap) => {
         const parentNodeId = nodeIdRef.current;
 
-        const {nodes, clientInfoList} = CreateAddNodeTreeFromFolders(folders);
+        const { nodes, clientInfoList } = CreateAddNodeTreeFromFolders(folders);
 
-        nodes.forEach(console.log)
+        nodes.forEach(console.log);
 
-        const request : AddNodeRequest = {
+        const request: AddNodeRequest = {
             sphereId,
             parentNodeId,
-            nodes
-        }  
+            nodes,
+        };
 
-        mutate({request,clientInfoList})
-    }
+        mutate({ request, clientInfoList });
+    };
 
     return (
         <Dialog open={show} onOpenChange={setShow}>
@@ -44,12 +48,11 @@ export default function AddFolderDialog({ show, setShow, sphereId, nodeIdRef }: 
                 <DialogHeader>
                     <DialogTitle>Add Folder Dialog</DialogTitle>
                     <DialogDescription>
-                    Use this dropzone to add one or more folders to your sphere. Empty folders will be added ONLY if dragged , not browsed.
+                        Use this dropzone to add one or more folders to your sphere. Empty folders
+                        will be added ONLY if dragged , not browsed.
                     </DialogDescription>
                 </DialogHeader>
-                <FolderDropzone
-                    onFoldersSelected={handleFoldersSelected}
-                />
+                <FolderDropzone onFoldersSelected={handleFoldersSelected} />
             </DialogContent>
         </Dialog>
     );

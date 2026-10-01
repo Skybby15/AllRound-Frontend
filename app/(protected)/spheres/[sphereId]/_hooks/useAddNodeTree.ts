@@ -6,21 +6,21 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRef } from "react";
 
 type RequestProp = {
-    request: AddNodeRequest,
-    clientInfoList: Map<string, File>
-}
+    request: AddNodeRequest;
+    clientInfoList: Map<string, File>;
+};
 
-export default function useAddNodeTree(sphereId : number) {
+export default function useAddNodeTree(sphereId: number) {
     const queryClient = useQueryClient();
     const clientInfoRef = useRef<Map<string, File> | null>(null);
 
     return useMutation({
-        mutationFn: async ({request, clientInfoList}: RequestProp) => {
+        mutationFn: async ({ request, clientInfoList }: RequestProp) => {
             clientInfoRef.current = clientInfoList;
-            try{
+            try {
                 return await nodeApi.nodePost({
-                    addNodeRequest: request
-                })
+                    addNodeRequest: request,
+                });
             } catch (error) {
                 if (error instanceof ResponseError) {
                     const body = (await error.response.json()) as ErrorResponse;
@@ -36,17 +36,15 @@ export default function useAddNodeTree(sphereId : number) {
             const nodes = response.nodes;
             const clientInfo = clientInfoRef.current;
 
-            if(!clientInfo)
-                return
+            if (!clientInfo) return;
 
-            if(!nodes)
-                return
+            if (!nodes) return;
 
             nodes.forEach((node) => {
                 const uploadUrl = node.uploadURL;
                 const file = clientInfo.get(node.clientId!);
 
-                console.log("file: " + file?.name + "\nurl: " + uploadUrl)
+                console.log("file: " + file?.name + "\nurl: " + uploadUrl);
 
                 fetch(uploadUrl!, {
                     method: "PUT",
@@ -59,13 +57,11 @@ export default function useAddNodeTree(sphereId : number) {
                         throw new Error(`Upload failed: ${response.status}`);
                     }
                 });
-
-            })
+            });
 
             queryClient.invalidateQueries({
-                queryKey: ["spheres", sphereId, "node-tree"]
-            })
-        }
+                queryKey: ["spheres", sphereId, "node-tree"],
+            });
+        },
     });
 }
-

@@ -21,22 +21,21 @@ type AddFileDialogProps = {
 export default function AddFileDialog({ show, setShow, sphereId, nodeIdRef }: AddFileDialogProps) {
     const { mutate, status } = useAddNodeTree(sphereId);
 
-    const handleFilesSelected = (files: File[]) => 
-    {
+    const handleFilesSelected = (files: File[]) => {
         const parentNodeId = nodeIdRef.current;
 
         console.log("attaching files under node: " + parentNodeId);
 
-        const {nodes, clientInfoList}  = CreateAddNodeTreeFromFiles(files);
+        const { nodes, clientInfoList } = CreateAddNodeTreeFromFiles(files);
 
-        const request : AddNodeRequest = {
+        const request: AddNodeRequest = {
             sphereId,
             parentNodeId,
-            nodes
-        }  
+            nodes,
+        };
 
-        mutate({request,clientInfoList})
-    }
+        mutate({ request, clientInfoList });
+    };
 
     return (
         <Dialog open={show} onOpenChange={setShow}>
@@ -47,9 +46,7 @@ export default function AddFileDialog({ show, setShow, sphereId, nodeIdRef }: Ad
                         Use this dropzone to add one or more file to your sphere
                     </DialogDescription>
                 </DialogHeader>
-                <FileDropzone
-                    onFilesSelected={handleFilesSelected}
-                />
+                <FileDropzone onFilesSelected={handleFilesSelected} />
             </DialogContent>
         </Dialog>
     );
