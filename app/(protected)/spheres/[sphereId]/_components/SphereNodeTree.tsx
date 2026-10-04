@@ -60,7 +60,7 @@ function NodeItem({ node, dialogProps }: { node: TreeNode; dialogProps: DialogSh
                     setSelectedFileNode(node);
                 }}
             >
-                <File className={cn("mr-1", `text-[${colors.primaryHEX}]`, "group-hover:text-white")} />
+                <File className={cn("mr-1", `text-primary`, `group-hover:text-[${colors.primary2HEX}]`)} />
                 {node.name}
             </div>
         );
@@ -73,7 +73,7 @@ function NodeItem({ node, dialogProps }: { node: TreeNode; dialogProps: DialogSh
                     className="flex cursor-pointer items-center px-2 py-1 rounded-sm group/second hover:bg-amber-700"
                     onClick={() => setOpen(!open)}
                 >
-                    {open ? <FolderOpen className={cn("mr-1", `text-[${colors.primary2HEX}]`, "group-hover/second:text-white")} /> : <FolderClosed className={cn("mr-1", `text-[${colors.primary2HEX}]`, "group-hover/second:text-white")} />}
+                    {open ? <FolderOpen className={cn("mr-1", `text-primary`, `group-hover/second:text-[${colors.primary2HEX}]`)} /> : <FolderClosed className={cn("mr-1","text-primary", `group-hover/second:text-[${colors.primary2HEX}]`)} />}
 
                     {node.name}
                 </button>
