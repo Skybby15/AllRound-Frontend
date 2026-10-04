@@ -19,7 +19,7 @@ type AddFileDialogProps = {
 };
 
 export default function AddFileDialog({ show, setShow, sphereId, nodeIdRef }: AddFileDialogProps) {
-    const { mutate, status } = useAddNodeTree(sphereId);
+    const { mutate } = useAddNodeTree(sphereId);
 
     const handleFilesSelected = (files: File[]) => {
         const parentNodeId = nodeIdRef.current;

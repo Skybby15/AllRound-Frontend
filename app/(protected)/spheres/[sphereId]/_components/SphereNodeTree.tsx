@@ -5,6 +5,7 @@ import {
     FolderOpen,
     FolderPlusIcon,
     MoreHorizontal,
+    Trash2Icon,
 } from "lucide-react";
 import { useState } from "react";
 import { TreeNode } from "../_types/TreeNode";
@@ -17,13 +18,13 @@ import {
     DropdownMenuLabel,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { colors } from "@/app/colors";
-import { color } from "three/tsl";
+import { colors } from "@/app/colors";  
 import { cn } from "cn";
 
 type DialogShowProps = {
     showAddFileDialogForNode: (nodeId: number | undefined) => void;
     showAddFolderDialogForNode: (nodeId: number | undefined) => void;
+    showDeleteNodeDialogForNode: (nodeId: number, isFolder: boolean) => void;
 
     setSelectedFileNode: (node: TreeNode) => void;
 };
@@ -46,7 +47,7 @@ export default function SphereNodeTree({
 
 function NodeItem({ node, dialogProps }: { node: TreeNode; dialogProps: DialogShowProps }) {
     const [open, setOpen] = useState(false);
-    const { showAddFileDialogForNode, showAddFolderDialogForNode, setSelectedFileNode } =
+    const { showAddFileDialogForNode, showAddFolderDialogForNode, setSelectedFileNode, showDeleteNodeDialogForNode } =
         dialogProps;
 
     if (!node.id) return;
@@ -99,6 +100,10 @@ function NodeItem({ node, dialogProps }: { node: TreeNode; dialogProps: DialogSh
                             <DropdownMenuItem onClick={() => showAddFolderDialogForNode(node.id)}>
                                 <FolderPlusIcon />
                                 Add Folder
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => showDeleteNodeDialogForNode(node.id!, node.type === "FOLDER" ? true : false)}>
+                                <Trash2Icon/>
+                                Delete
                             </DropdownMenuItem>
                             <DropdownMenuItem>Details</DropdownMenuItem>
                         </DropdownMenuGroup>

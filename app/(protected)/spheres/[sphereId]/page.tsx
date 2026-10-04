@@ -2,15 +2,11 @@
 
 import { colors } from "@/app/colors";
 import {
-    DownloadIcon,
-    FileIcon,
     FilePlusIcon,
     FolderPlusIcon,
     Orbit,
     Plus,
     Settings,
-    SidebarCloseIcon,
-    XIcon,
 } from "lucide-react";
 import { useParams } from "next/navigation";
 import useGetNodeTree from "./_hooks/useGetNodeTree";
@@ -30,6 +26,7 @@ import AddFileDialog from "./_components/AddFileDialog";
 import AddFolderDialog from "./_components/AddFolderDialog";
 import { TreeNode } from "./_types/TreeNode";
 import SelectedFileInfo from "./_components/SelectedFileInfo";
+import DeleteNodeDialog from "./_components/DeleteNodeDialog";
 
 export default function SpherePage() {
     const { sphereId } = useParams<{ sphereId: string }>();
@@ -39,8 +36,11 @@ export default function SpherePage() {
     const [showAddFileDialog, setShowAddFileDialog] = useState(false);
     const [showAddFolderDialog, setShowAddFolderDialog] = useState(false);
     const nodeIdRef = useRef<number | undefined>(undefined);
-
+    
     const [selectedFileNode, setSelectedFileNode] = useState<TreeNode | null>(null);
+    
+    const [showDeleteNodeDialog, setShowDeleteNodeDialog] = useState(false);
+    const isFolderRef = useRef<boolean | undefined>(undefined);
 
     const showAddFileDialogForNode = (nodeId: number | undefined = undefined) => {
         nodeIdRef.current = nodeId;
@@ -51,6 +51,12 @@ export default function SpherePage() {
         nodeIdRef.current = nodeId;
         setShowAddFolderDialog(true);
     };
+
+    const showDeleteNodeDialogForNode = (nodeId: number, isFolder: boolean) => {
+        nodeIdRef.current = nodeId;
+        isFolderRef.current = isFolder;
+        setShowDeleteNodeDialog(true);
+    }
 
     const onSelectedFilePopupClose = () => {
         setSelectedFileNode(null);
@@ -122,6 +128,7 @@ export default function SpherePage() {
                             dialogsProps={{
                                 showAddFileDialogForNode,
                                 showAddFolderDialogForNode,
+                                showDeleteNodeDialogForNode,
                                 setSelectedFileNode,
                             }}
                         />
@@ -129,7 +136,10 @@ export default function SpherePage() {
                 </div>
             </div>
             {selectedFileNode && (
-                <SelectedFileInfo node={selectedFileNode} onClose={onSelectedFilePopupClose} />
+                <SelectedFileInfo node={selectedFileNode} 
+                    onClose={onSelectedFilePopupClose} 
+                    onDelete={() => showDeleteNodeDialogForNode(selectedFileNode.id!, selectedFileNode.type === "FILE" ? false : true)} 
+                />
             )}
             <AddFileDialog
                 show={showAddFileDialog}
@@ -142,6 +152,19 @@ export default function SpherePage() {
                 setShow={setShowAddFolderDialog}
                 sphereId={Number(sphereId)}
                 nodeIdRef={nodeIdRef}
+            />
+            <DeleteNodeDialog
+                show={showDeleteNodeDialog}
+                setShow={setShowDeleteNodeDialog}
+                sphereId={Number(sphereId)}
+                nodeIdRef={nodeIdRef}
+                isFolderRef={isFolderRef}
+
+                onDeleteSuccess={(deletedNodeId) => {
+                    if (selectedFileNode && selectedFileNode.id === deletedNodeId) {
+                        setSelectedFileNode(null);
+                    }
+                }}
             />
         </main>
     );

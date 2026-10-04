@@ -1,15 +1,16 @@
 import { Button } from "@/components/ui/button";
 import { TreeNode } from "../_types/TreeNode";
-import { DownloadIcon, FileIcon, XIcon } from "lucide-react";
+import { DownloadIcon, FileIcon, Trash2Icon, XIcon } from "lucide-react";
 import useDownloadFile from "../_hooks/useDownloadFile";
 import { toast } from "sonner";
 
 type SelectedFileInfoProps = {
     node: TreeNode;
     onClose: () => void;
+    onDelete: () => void;
 };
 
-export default function SelectedFileInfo({ node, onClose }: SelectedFileInfoProps) {
+export default function SelectedFileInfo({ node, onClose, onDelete }: SelectedFileInfoProps) {
     const { mutate } = useDownloadFile();
 
     const handleDownload = () => {
@@ -62,6 +63,10 @@ export default function SelectedFileInfo({ node, onClose }: SelectedFileInfoProp
                 <Button onClick={handleDownload}>
                     <DownloadIcon />
                     Download
+                </Button>
+                <Button onClick={onDelete} variant={"destructive"} className="ml-2">
+                    <Trash2Icon />
+                    Delete
                 </Button>
             </div>
         </div>
