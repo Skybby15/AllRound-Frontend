@@ -1,8 +1,7 @@
-import { LoginRequest, ResponseError } from "@/api";
+import { LoginRequest } from "@/api";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { authApi } from "@/reactquery/apiClients";
-import { ApiError } from "@/reactquery/ApiError";
-import { ErrorResponse } from "@/reactquery/ErrorResponse";
+import apiRequest from "@/utils/apiRequest";
 import { useMutation } from "@tanstack/react-query";
 
 export default function useLogin() {
@@ -10,8 +9,9 @@ export default function useLogin() {
 
     return useMutation({
         mutationFn: async (request: LoginRequest) => {
-            try {
-                return await authApi.authLoginPost(
+            return await apiRequest(() =>
+            {
+                return authApi.authLoginPost(
                     {
                         loginRequest: request,
                     },
@@ -19,15 +19,7 @@ export default function useLogin() {
                         credentials: "include",
                     }
                 );
-            } catch (error) {
-                if (error instanceof ResponseError) {
-                    const body = (await error.response.json()) as ErrorResponse;
-
-                    throw new ApiError(body.code, body.message, body.timestamp);
-                }
-
-                throw new Error("Something went wrong.");
-            }
+            })
         },
 
         onSuccess: (response) => {
