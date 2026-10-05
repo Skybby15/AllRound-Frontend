@@ -18,7 +18,6 @@ import {
     DropdownMenuLabel,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { colors } from "@/app/colors";  
 import { cn } from "cn";
 
 type DialogShowProps = {
@@ -47,8 +46,12 @@ export default function SphereNodeTree({
 
 function NodeItem({ node, dialogProps }: { node: TreeNode; dialogProps: DialogShowProps }) {
     const [open, setOpen] = useState(false);
-    const { showAddFileDialogForNode, showAddFolderDialogForNode, setSelectedFileNode, showDeleteNodeDialogForNode } =
-        dialogProps;
+    const {
+        showAddFileDialogForNode,
+        showAddFolderDialogForNode,
+        setSelectedFileNode,
+        showDeleteNodeDialogForNode,
+    } = dialogProps;
 
     if (!node.id) return;
 
@@ -60,7 +63,13 @@ function NodeItem({ node, dialogProps }: { node: TreeNode; dialogProps: DialogSh
                     setSelectedFileNode(node);
                 }}
             >
-                <File className={cn("mr-1", `text-primary`, `group-hover:text-[${colors.primary2HEX}]`)} />
+                <File
+                    className={cn(
+                        "mr-1",
+                        `text-primary`,
+                        `group-hover:text-primary2`
+                    )}
+                />
                 {node.name}
             </div>
         );
@@ -73,7 +82,23 @@ function NodeItem({ node, dialogProps }: { node: TreeNode; dialogProps: DialogSh
                     className="flex cursor-pointer items-center px-2 py-1 rounded-sm group/second hover:bg-amber-700"
                     onClick={() => setOpen(!open)}
                 >
-                    {open ? <FolderOpen className={cn("mr-1", `text-primary`, `group-hover/second:text-[${colors.primary2HEX}]`)} /> : <FolderClosed className={cn("mr-1","text-primary", `group-hover/second:text-[${colors.primary2HEX}]`)} />}
+                    {open ? (
+                        <FolderOpen
+                            className={cn(
+                                "mr-1",
+                                `text-primary`,
+                                `group-hover/second:text-primary2`
+                            )}
+                        />
+                    ) : (
+                        <FolderClosed
+                            className={cn(
+                                "mr-1",
+                                "text-primary",
+                                `group-hover/second:text-primary2`
+                            )}
+                        />
+                    )}
 
                     {node.name}
                 </button>
@@ -101,8 +126,15 @@ function NodeItem({ node, dialogProps }: { node: TreeNode; dialogProps: DialogSh
                                 <FolderPlusIcon />
                                 Add Folder
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => showDeleteNodeDialogForNode(node.id!, node.type === "FOLDER" ? true : false)}>
-                                <Trash2Icon/>
+                            <DropdownMenuItem
+                                onClick={() =>
+                                    showDeleteNodeDialogForNode(
+                                        node.id!,
+                                        node.type === "FOLDER" ? true : false
+                                    )
+                                }
+                            >
+                                <Trash2Icon />
                                 Delete
                             </DropdownMenuItem>
                             <DropdownMenuItem>Details</DropdownMenuItem>

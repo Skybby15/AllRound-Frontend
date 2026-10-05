@@ -19,7 +19,7 @@ export default function Start({ toPageFn }: StartSectionProps) {
                         "
                 >
                     <path
-                        className="fill-transparent hover:fill-[#0355fc] pointer-events-auto transition-colors duration-300 cursor-pointer"
+                        className="fill-transparent hover:fill-primary2 pointer-events-auto transition-colors duration-300 cursor-pointer"
                         d="
                                 M 20 135
                                 H 185
@@ -74,7 +74,7 @@ export default function Start({ toPageFn }: StartSectionProps) {
                         "
                 >
                     <path
-                        className="fill-transparent hover:fill-[#0355fc] pointer-events-auto transition-colors duration-300 cursor-pointer"
+                        className="fill-transparent hover:fill-primary2 pointer-events-auto transition-colors duration-300 cursor-pointer"
                         d="
                                 M 480 135
                                 H 315

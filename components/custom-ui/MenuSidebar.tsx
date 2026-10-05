@@ -150,19 +150,19 @@ export function MenuSidebar() {
                         className="flex w-full flex-col gap-2"
                     >
                         <div className="flex items-center justify-between gap-4 px-4">
-                            <h4 className="text-sm font-semibold text-[#0355fc]">Account</h4>
+                            <h4 className="text-sm font-semibold text-primary2">Account</h4>
                             <CollapsibleTrigger
                                 render={
                                     <Button variant="ghost" size="icon" className="size-8">
                                         {openAccount && (
                                             <>
-                                                <ChevronUp className="text-[#0355fc]" />
+                                                <ChevronUp className="text-primary2" />
                                                 <span className="sr-only">Toggle details</span>
                                             </>
                                         )}
                                         {!openAccount && (
                                             <>
-                                                <ChevronDown className="text-[#0355fc]" />
+                                                <ChevronDown className="text-primary2" />
                                                 <span className="sr-only">Toggle details</span>
                                             </>
                                         )}

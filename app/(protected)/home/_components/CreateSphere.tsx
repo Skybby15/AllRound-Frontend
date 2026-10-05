@@ -39,7 +39,7 @@ export default function CreateSphere() {
                 />
                 <CreateFromFolderDialog
                     render={
-                        <CreateSphereButton className="hover:bg-[#0355fc] z-0">
+                        <CreateSphereButton className="hover:bg-primary2 z-0">
                             <Folder className="absolute inset-0 m-auto size-32 opacity-20" />
                             From Folder
                         </CreateSphereButton>
