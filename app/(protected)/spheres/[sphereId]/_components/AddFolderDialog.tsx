@@ -31,8 +31,6 @@ export default function AddFolderDialog({
 
         const { nodes, clientInfoList } = CreateAddNodeTreeFromFolders(folders);
 
-        nodes.forEach(console.log);
-
         const request: AddNodeRequest = {
             sphereId,
             parentNodeId,

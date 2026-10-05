@@ -1,11 +1,12 @@
 import { LoginRequest } from "@/api";
 import { useAuth } from "@/components/auth/AuthProvider";
+import useApiRequest from "@/hooks/useApiRequest";
 import { authApi } from "@/reactquery/apiClients";
-import apiRequest from "@/utils/apiRequest";
 import { useMutation } from "@tanstack/react-query";
 
 export default function useLogin() {
     const { loginAct } = useAuth();
+    const apiRequest = useApiRequest();
 
     return useMutation({
         mutationFn: async (request: LoginRequest) => {

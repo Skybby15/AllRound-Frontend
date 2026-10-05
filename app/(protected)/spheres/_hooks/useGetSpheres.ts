@@ -1,8 +1,10 @@
+import useApiRequest from "@/hooks/useApiRequest";
 import { sphereApi } from "@/reactquery/apiClients";
-import apiRequest from "@/utils/apiRequest";
 import { useQuery } from "@tanstack/react-query";
 
 export default function useGetSpheres() {
+    const apiRequest = useApiRequest();
+
     return useQuery({
         queryKey: ["spheres"],
         queryFn: async () => {

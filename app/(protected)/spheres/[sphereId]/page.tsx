@@ -79,12 +79,10 @@ export default function SpherePage({searchParams}: SpherePageProps) {
     }
 
     if (isError) {
-        console.log(error);
         return <div>Failed to load nodes.</div>;
     }
 
     const sphereNodes = ConstructNodeTree(data?.nodes ?? []);
-    console.log(sphereNodes);
 
     return (
         <main className="flex h-screen w-screen items-center">

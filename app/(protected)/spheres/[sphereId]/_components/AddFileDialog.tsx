@@ -24,8 +24,6 @@ export default function AddFileDialog({ show, setShow, sphereId, nodeIdRef }: Ad
     const handleFilesSelected = (files: File[]) => {
         const parentNodeId = nodeIdRef.current;
 
-        console.log("attaching files under node: " + parentNodeId);
-
         const { nodes, clientInfoList } = CreateAddNodeTreeFromFiles(files);
 
         const request: AddNodeRequest = {

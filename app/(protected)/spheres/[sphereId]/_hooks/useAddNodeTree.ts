@@ -1,6 +1,6 @@
 import { AddNodeRequest } from "@/api";
+import useApiRequest from "@/hooks/useApiRequest";
 import { nodeApi } from "@/reactquery/apiClients";
-import apiRequest from "@/utils/apiRequest";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRef } from "react";
 
@@ -11,6 +11,7 @@ type RequestProp = {
 
 export default function useAddNodeTree(sphereId: number) {
     const queryClient = useQueryClient();
+    const apiRequest = useApiRequest();
     const clientInfoRef = useRef<Map<string, File> | null>(null);
 
     return useMutation({
@@ -35,8 +36,6 @@ export default function useAddNodeTree(sphereId: number) {
             nodes.forEach((node) => {
                 const uploadUrl = node.uploadURL;
                 const file = clientInfo.get(node.clientId!);
-
-                console.log("file: " + file?.name + "\nurl: " + uploadUrl);
 
                 fetch(uploadUrl!, {
                     method: "PUT",
