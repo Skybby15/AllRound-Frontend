@@ -17,7 +17,7 @@ export default function SpheresPage() {
                     data.spheres.map((sphere) => (
                         <Card key={sphere.id} className="my-5 ">
                             <CardTitle>
-                                <a href={"/spheres/" + sphere.id} className="hover:underline">
+                                <a href={`/spheres/${sphere.id}?name=${encodeURIComponent(sphere.name!)}`} className="hover:underline">
                                     {sphere.name}
                                 </a>
                             </CardTitle>

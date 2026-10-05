@@ -20,8 +20,15 @@ type DeleteNodeDialogProps = {
     onDeleteSuccess: (deletedNodeId: number) => void;
 };
 
-export default function DeleteNodeDialog({ show, setShow, sphereId, nodeIdRef, isFolderRef, onDeleteSuccess }: DeleteNodeDialogProps) {
-    const {mutate, status} = useDeleteNode(sphereId);
+export default function DeleteNodeDialog({
+    show,
+    setShow,
+    sphereId,
+    nodeIdRef,
+    isFolderRef,
+    onDeleteSuccess,
+}: DeleteNodeDialogProps) {
+    const { mutate, status } = useDeleteNode(sphereId);
 
     const handleDelete = () => {
         const nodeId = nodeIdRef.current;
@@ -29,13 +36,13 @@ export default function DeleteNodeDialog({ show, setShow, sphereId, nodeIdRef, i
             mutate({ nodeId });
             setShow(false);
         }
-    }
+    };
 
     useEffect(() => {
         if (status === "success") {
             onDeleteSuccess(nodeIdRef.current!);
         }
-    },[status]);
+    }, [status]);
 
     return (
         <Dialog open={show} onOpenChange={setShow}>
@@ -52,7 +59,7 @@ export default function DeleteNodeDialog({ show, setShow, sphereId, nodeIdRef, i
                         )}
                     </DialogDescription>
                 </DialogHeader>
-                 <DialogFooter>
+                <DialogFooter>
                     <Button variant={"destructive"} onClick={handleDelete}>
                         Delete {isFolderRef.current === true ? "folder" : "file"}
                     </Button>
