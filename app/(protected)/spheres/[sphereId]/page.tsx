@@ -20,6 +20,7 @@ import AddFolderDialog from "./_components/AddFolderDialog";
 import { TreeNode } from "./_types/TreeNode";
 import SelectedFileInfo from "./_components/SelectedFileInfo";
 import DeleteNodeDialog from "./_components/DeleteNodeDialog";
+import { cn } from "@/lib/utils";
 
 interface SpherePageProps {
     searchParams: Promise<{
@@ -85,8 +86,10 @@ export default function SpherePage({searchParams}: SpherePageProps) {
     const sphereNodes = ConstructNodeTree(data?.nodes ?? []);
 
     return (
-        <main className="flex h-screen w-screen items-center">
-            <div className="bg-secondary/50 border-secondary border-10 w-3/4 min-w-100 h-3/4 min-h-100 rounded-lg overflow-hidden">
+        <main className="flex h-screen w-full items-center overflow-hidden">
+            <div className={cn("bg-secondary/50 border-secondary border-10 min-w-100 h-3/4 min-h-100 rounded-lg overflow-hidden flex flex-col",
+                selectedFileNode ? "w-6/11" : "w-9/11"
+            )}>
                 <div className="flex justify-between px-5 py-3">
                     <h1 className="flex items-center gap-2 text-2xl font-bold">
                         <Orbit className="text-primary2" />
@@ -131,7 +134,7 @@ export default function SpherePage({searchParams}: SpherePageProps) {
                     </div>
                 </div>
 
-                <div className="w-full min-w-100 max-h-9/10 overflow-auto border-b border-b-gray-400 pb-1">
+                <div className="w-full min-w-100 max-h-9/10 custom-scrollbar overflow-auto border-b border-b-gray-400 pb-1">
                     <div className="relative ml-2 pl-4">
                         <SphereNodeTree
                             nodes={sphereNodes}

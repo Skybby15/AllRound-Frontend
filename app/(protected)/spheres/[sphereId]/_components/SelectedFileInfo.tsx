@@ -46,15 +46,17 @@ export default function SelectedFileInfo({ node, onClose, onDelete }: SelectedFi
     };
 
     return (
-        <div className="relative bg-secondary/50 border-secondary border-10 w-1/4 min-w-100 h-2/3 mx-5 min-h-100 rounded-lg overflow-hidden">
+        <div className="relative flex flex-col items-center bg-secondary/50 border-secondary border-10 w-4/11 h-2/3 mx-5 min-h-100 rounded-lg overflow-hidden">
             <div className="absolute flex justify-end top-0 w-full ">
                 <Button className="m-2" variant={"destructive"} onClick={onClose}>
                     <XIcon />
                 </Button>
             </div>
-            <div className="flex items-center ml-5 mt-15">
-                <FileIcon className="size-10 mr-2" />
-                <p className="text-xl">{node.name}</p>
+            <div className="flex w-5/6 min-w-0 items-center mt-15 justify-center">
+                <FileIcon className=" size-10 mr-2 shrink-0" />
+                <p className="flex-1 min-w-0 max-w-full text-xl truncate">
+                    {node.name}
+                </p>
             </div>
             <div className="flex justify-center">
                 <p>Details of the file will be here</p>
