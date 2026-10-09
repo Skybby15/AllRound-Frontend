@@ -3,6 +3,7 @@ import { TreeNode } from "../_types/TreeNode";
 import { DownloadIcon, FileIcon, Trash2Icon, XIcon } from "lucide-react";
 import useDownloadFile from "../_hooks/useDownloadFile";
 import { toast } from "sonner";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 type SelectedFileInfoProps = {
     node: TreeNode;
@@ -54,9 +55,16 @@ export default function SelectedFileInfo({ node, onClose, onDelete }: SelectedFi
             </div>
             <div className="flex w-5/6 min-w-0 items-center mt-15 justify-center">
                 <FileIcon className=" size-10 mr-2 shrink-0" />
-                <p className="flex-1 min-w-0 max-w-full text-xl truncate">
-                    {node.name}
-                </p>
+                <Tooltip>
+                    <TooltipTrigger render={
+                        <p className="flex-1 min-w-0 max-w-full text-xl truncate">
+                            {node.name}
+                        </p>
+                    }/>
+                    <TooltipContent>
+                        <p>{node.name}</p>
+                    </TooltipContent>
+                </Tooltip>
             </div>
             <div className="flex justify-center">
                 <p>Details of the file will be here</p>

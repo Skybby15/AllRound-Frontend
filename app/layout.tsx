@@ -44,7 +44,7 @@ export default function RootLayout({
         >
             <body className="min-h-full flex flex-col">
                 <QueryProvider>
-                    <TooltipProvider>
+                    <TooltipProvider delay={300}>
                         <AuthProvider>{children}</AuthProvider>
                     </TooltipProvider>
                     <Toaster theme="dark" />

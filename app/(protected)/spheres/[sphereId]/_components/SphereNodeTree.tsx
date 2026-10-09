@@ -95,7 +95,7 @@ function NodeItem({ node, dialogProps }: { node: TreeNode; dialogProps: DialogSh
                             className={cn(
                                 "mr-1",
                                 "text-primary",
-                                `group-hover/second:text-primary2`
+                                `group-hover/second:text`
                             )}
                         />
                     )}
