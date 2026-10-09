@@ -6,9 +6,9 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import FolderDropzone, { FolderMap } from "./FolderDropzone";
-import { RefObject } from "react";
+import { RefObject, useEffect, useState } from "react";
 import useAddNodeTree from "../_hooks/useAddNodeTree";
-import { AddNodeRequest, NodeAddDTO } from "@/api";
+import { AddNodeRequest} from "@/api";
 import CreateAddNodeTreeFromFolders from "../_utils/CreateAddNodeTreeFromFolders";
 
 type AddFolderDialogProps = {
@@ -24,7 +24,8 @@ export default function AddFolderDialog({
     sphereId,
     nodeIdRef,
 }: AddFolderDialogProps) {
-    const { mutate, status } = useAddNodeTree(sphereId);
+    const { mutate, isPending } = useAddNodeTree(sphereId);
+    const [uploading, setUploading] = useState(false);
 
     const handleFoldersSelected = (folders: FolderMap) => {
         const parentNodeId = nodeIdRef.current;
@@ -37,8 +38,21 @@ export default function AddFolderDialog({
             nodes,
         };
 
+
+        setUploading(true);
         mutate({ request, clientInfoList });
     };
+
+    useEffect(()=>{
+        console.log(isPending)
+    
+        if(isPending == false)
+        {
+            setShow(false);
+            setUploading(false);
+        }
+
+    },[isPending])
 
     return (
         <Dialog open={show} onOpenChange={setShow}>
@@ -50,7 +64,12 @@ export default function AddFolderDialog({
                         will be added ONLY if dragged , not browsed.
                     </DialogDescription>
                 </DialogHeader>
-                <FolderDropzone onFoldersSelected={handleFoldersSelected} />
+                { !uploading && show &&
+                    <FolderDropzone onFoldersSelected={handleFoldersSelected} />
+                }
+                { uploading &&
+                    <p>Uploading...</p>
+                }
             </DialogContent>
         </Dialog>
     );

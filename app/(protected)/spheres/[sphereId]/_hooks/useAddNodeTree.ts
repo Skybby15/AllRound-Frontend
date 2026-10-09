@@ -2,7 +2,8 @@ import { AddNodeRequest } from "@/api";
 import useApiRequest from "@/hooks/useApiRequest";
 import { nodeApi } from "@/reactquery/apiClients";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useRef } from "react";
+import { upload } from "@testing-library/user-event/dist/cjs/setup/directApi.js";
+import { useRef, useState } from "react";
 
 type RequestProp = {
     request: AddNodeRequest;
@@ -25,7 +26,7 @@ export default function useAddNodeTree(sphereId: number) {
             });
         },
 
-        onSuccess: (response) => {
+        onSuccess: async (response) => {
             const nodes = response.nodes;
             const clientInfo = clientInfoRef.current;
 
@@ -54,5 +55,5 @@ export default function useAddNodeTree(sphereId: number) {
                 queryKey: ["spheres", sphereId, "node-tree"],
             });
         },
-    });
+    })
 }

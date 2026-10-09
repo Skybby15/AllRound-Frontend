@@ -6,9 +6,9 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import FileDropzone from "./FileDropzone";
-import { RefObject } from "react";
+import { RefObject, useEffect } from "react";
 import useAddNodeTree from "../_hooks/useAddNodeTree";
-import { AddNodeRequest, NodeAddDTO } from "@/api";
+import { AddNodeRequest } from "@/api";
 import CreateAddNodeTreeFromFiles from "../_utils/CreateAddNodeTreeFromFiles";
 
 type AddFileDialogProps = {
@@ -19,7 +19,7 @@ type AddFileDialogProps = {
 };
 
 export default function AddFileDialog({ show, setShow, sphereId, nodeIdRef }: AddFileDialogProps) {
-    const { mutate } = useAddNodeTree(sphereId);
+    const { mutate, status, reset: resetMutationState } = useAddNodeTree(sphereId);
 
     const handleFilesSelected = (files: File[]) => {
         const parentNodeId = nodeIdRef.current;
@@ -35,6 +35,16 @@ export default function AddFileDialog({ show, setShow, sphereId, nodeIdRef }: Ad
         mutate({ request, clientInfoList });
     };
 
+    useEffect(()=>{
+    
+        if(status == "success")
+        {
+            setShow(false);
+            resetMutationState();
+        }
+
+    },[status])
+
     return (
         <Dialog open={show} onOpenChange={setShow}>
             <DialogContent>
@@ -44,7 +54,14 @@ export default function AddFileDialog({ show, setShow, sphereId, nodeIdRef }: Ad
                         Use this dropzone to add one or more file to your sphere
                     </DialogDescription>
                 </DialogHeader>
-                <FileDropzone onFilesSelected={handleFilesSelected} />
+                { status == "idle" &&
+                    <FileDropzone onFilesSelected={handleFilesSelected} />
+                }
+                { status != "idle" &&
+                    <p>
+                        Uploading...
+                    </p>
+                }
             </DialogContent>
         </Dialog>
     );
